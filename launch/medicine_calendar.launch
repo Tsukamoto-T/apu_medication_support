@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="medicine_calendar" pkg="apu_demo" type="medicine_calendar" output="screen">
+    <param name="threshold_plane" value="0.002"/>
+    <param name="cluster_tolerance" value="0.01"/>
+    <param name="seddev_multhresh" value="1"/>
+    <param name="number_neighbors" value="20"/>
+  </node>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apu_demo)/rviz/medicine_calendar.rviz" required="true" output="screen" />
+</launch>
