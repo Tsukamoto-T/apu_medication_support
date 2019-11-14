@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <launch>
-  <node name="medicine_calendar" pkg="medicine_calendar" type="medicine_calendar_pcl" output="screen">
-    <param name="threshold_plane" value="0.1"/> <!--value=0.002-->
-    <param name="cluster_tolerance" value="0.01"/> <!--value=0.01-->
-    <param name="seddev_multhresh" value="1"/>  <!--value=1-->
-    <param name="number_neighbors" value="20"/> <!--value=20-->
+  <node name="medicine_calendar_pcl" pkg="medicine_calendar" type="medicine_calendar_pcl" output="screen">
+    <param name="threshold_plane" value="0.02"/>
+    <param name="cluster_tolerance" value="0.01"/>
+    <param name="seddev_multhresh" value="1.0"/>
+    <param name="number_neighbors" value="20"/>
+    <param name="threshold_line" value="0.02"/>
   </node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/medicine_calendar.rviz" required="true" output="screen" />
 </launch>
