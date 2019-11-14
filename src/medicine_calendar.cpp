@@ -203,6 +203,7 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   sor_plane.filter(*cloud_rest_removal);
 
   //================クラスタリング====================================================
+  /*
   pcl::search::KdTree<PointT>::Ptr cluster_tree (new pcl::search::KdTree<PointT>);
   cluster_tree->setInputCloud(cloud_rest);
   std::vector<pcl::PointIndices> cluster_indices;
@@ -250,6 +251,7 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
     }
     j++;
   }
+  */
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_all;
   pcl::toROSMsg(*cloud_all, msgs_all);
@@ -268,11 +270,13 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   pcl::toROSMsg(*cloud_rest_removal, msgs_rest_removal);
   pub_rest_removal.publish(msgs_rest_removal);
   //=========出力：cluster_0to5===================================================
+  /*
   sensor_msgs::PointCloud2 msg_cluster_0;
   MedicineCalendar::Output_pub(cloud_cluster_0,msg_cluster_0,pub_cluster_0);
   sensor_msgs::PointCloud2 msg_cluster_1;
   MedicineCalendar::Output_pub(cloud_cluster_1,msg_cluster_1,pub_cluster_1);
   sensor_msgs::PointCloud2 msg_cluster_2;
+  */
 }
 
 //=======main===================================================================
