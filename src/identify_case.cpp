@@ -46,42 +46,31 @@
 
 typedef pcl::PointXYZRGB PointT;
 
-class MedicineCalendar{
+class IdentifyCase{
 private:
   ros::Subscriber sub;
   ros::Publisher pub_all;
   ros::Publisher pub_plane;
   ros::Publisher pub_rest;
   ros::Publisher pub_rest_removal;
-  ros::Publisher pub_cluster_0;
-  ros::Publisher pub_cluster_1;
-  ros::Publisher pub_cluster_2;
-
   void CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg);
+
 public:
   float threshold_plane = 0.005;
-  float cluster_tolerance = 0.005;
-  float seddev_multhresh = 1;
   int number_neighbors = 20;
-  float threshold_line = 0.005;
-  MedicineCalendar();
-
+  float seddev_multhresh = 1;
+  IdentifyCase();
   pcl::PointCloud<PointT>::Ptr Down_Sampling(pcl::PointCloud<PointT>::Ptr cloud_input);
-  void Output_pub(pcl::PointCloud<PointT>::Ptr cloud_cluster_ ,sensor_msgs::PointCloud2 pub_cloud_cluster_,ros::Publisher pub_cluster_);
 };
 
-MedicineCalendar::MedicineCalendar(){
-  std::cout << threshold_plane <<"medipro"<< '\n';
+IdentifyCase::IdentifyCase(){
   ros::NodeHandle nh("~");
   nh.param<float>("threshold_plane", threshold_plane, threshold_plane);
-  nh.param<float>("cluster_tolerance",cluster_tolerance,cluster_tolerance);
-  nh.param<float>("seddev_multhresh",seddev_multhresh,seddev_multhresh);
   nh.param<int>("number_neighbors",number_neighbors,number_neighbors);
-  nh.param<float>("threshold_line", threshold_line, threshold_line);
-  std::cout << threshold_plane <<"mediaf"<< '\n';
+  nh.param<float>("seddev_multhresh",seddev_multhresh,seddev_multhresh);
 
   std::string hsr_topic = "/hsrb/head_rgbd_sensor/depth_registered/rectified_points";
-  sub = nh.subscribe(hsr_topic, 1, &MedicineCalendar::CloudCb,this);
+  sub = nh.subscribe(hsr_topic, 1, &IdentifyCase::CloudCb,this);
   if (!ros::topic::waitForMessage<sensor_msgs::PointCloud2>(hsr_topic, ros::Duration(10.0))) {
     ROS_ERROR("timeout exceeded while waiting for message on topic %s", hsr_topic.c_str());
     exit(EXIT_FAILURE);
@@ -91,13 +80,10 @@ MedicineCalendar::MedicineCalendar(){
   pub_plane = nh.advertise<sensor_msgs::PointCloud2>("cloud_plane", 1);
   pub_rest = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest", 1);
   pub_rest_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest_removal", 1);
-  pub_cluster_0 = nh.advertise<sensor_msgs::PointCloud2>("cluster_0", 1);
-  pub_cluster_1 = nh.advertise<sensor_msgs::PointCloud2>("cluster_1", 1);
-  pub_cluster_2 = nh.advertise<sensor_msgs::PointCloud2>("cluster_2", 1);
 }
 
 //======================ダウンサンプリング===============================================
-pcl::PointCloud<PointT>::Ptr MedicineCalendar::Down_Sampling(pcl::PointCloud<PointT>::Ptr  cloud_input)
+pcl::PointCloud<PointT>::Ptr IdentifyCase::Down_Sampling(pcl::PointCloud<PointT>::Ptr  cloud_input)
 {
   pcl::PointCloud<PointT>::Ptr cloud_vg (new pcl::PointCloud<PointT>);
   pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints(new pcl::PointCloud<pcl::PointXYZI>);
@@ -143,20 +129,7 @@ pcl::PointCloud<PointT>::Ptr MedicineCalendar::Down_Sampling(pcl::PointCloud<Poi
   return cloud_output;
 }
 
-//========出力関数=========================================================================
-void MedicineCalendar::Output_pub(pcl::PointCloud<PointT>::Ptr cloud_,sensor_msgs::PointCloud2 msgs_,ros::Publisher pub_){
-  if(cloud_->size() > 0){
-    pcl::toROSMsg(*cloud_, msgs_);
-    msgs_.header.frame_id = "head_rgbd_sensor_link";
-    pub_.publish(msgs_);
-  }
-  else{
-    ROS_INFO("Size (%d)",cloud_);
-  }
-}
-
-//=====コールバック==========================================================================
-void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
+void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   std::cout << "callback_start" << std::endl;
   pcl::PointCloud<PointT>::Ptr cloud_all(new pcl::PointCloud<PointT>);
   pcl::PointCloud<PointT>::Ptr cloud_input_rm(new pcl::PointCloud<PointT>);
@@ -165,7 +138,7 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   pcl::removeNaNFromPointCloud(*cloud_all,*cloud_input_rm,index_all);
 
   pcl::PointCloud<PointT>::Ptr cloud_dwnsmp(new pcl::PointCloud<PointT>);
-  cloud_dwnsmp = MedicineCalendar::Down_Sampling(cloud_input_rm);
+  cloud_dwnsmp = IdentifyCase::Down_Sampling(cloud_input_rm);
 
   //=======平面除去(平面モデル,平面検出=======================================================
   // Create the segmentation object for the planar model and set all the parameters
@@ -174,14 +147,14 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
   pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT>());
-  pcl::PCDWriter writer;
+  pcl::PCDWriter writer; //?
   seg.setOptimizeCoefficients (true);
   seg.setModelType (pcl::SACMODEL_PLANE);
   seg.setMethodType (pcl::SAC_RANSAC);
   seg.setMaxIterations (100);  //試行回数
   seg.setDistanceThreshold (threshold_plane);  //距離の閾値
   std::cout << threshold_plane << '\n';
-  //int i=0;
+
   // Segment the largest planar component from the remaining cloud
   seg.setInputCloud (cloud_dwnsmp);
   seg.segment (*inliers, *coefficients);
@@ -207,64 +180,13 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   sor_plane.setStddevMulThresh(seddev_multhresh);
   sor_plane.filter(*cloud_rest_removal);
 
-  //カレンダー点群の抽出===============================================================
 
-  //================クラスタリング====================================================
-  /*
-  pcl::search::KdTree<PointT>::Ptr cluster_tree (new pcl::search::KdTree<PointT>);
-  cluster_tree->setInputCloud(cloud_rest);
-  std::vector<pcl::PointIndices> cluster_indices;
-  pcl::EuclideanClusterExtraction<PointT> ec;
-  ec.setClusterTolerance (cluster_tolerance);//探索する半径の設定
-  ec.setMinClusterSize (1);//最小点の数を設定
-  ec.setMaxClusterSize (20000);//最大の点の数を設定
-  ec.setSearchMethod (cluster_tree);//検索先のポインタを指定
-  ec.setInputCloud (cloud_rest);//点群を入力
-  ec.extract (cluster_indices);//クラスター情報を出力
-
-  int j = 0;
-
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_0 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_1 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_2 (new pcl::PointCloud<PointT>);
-
-  int cc[6] = {10000,10000,10000,10000,10000,10000};
-
-  for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();it != cluster_indices.end(); ++it){
-    pcl::PointCloud<PointT>::Ptr cloud_cluster (new pcl::PointCloud<PointT>);
-    for(std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); pit++){
-      cloud_cluster->points.push_back(cloud_rest->points[*pit]);
-    }
-
-    cloud_cluster->width = cloud_cluster->points.size();
-    cloud_cluster->height = 1;
-    cloud_cluster->is_dense = true;
-
-    switch(j){
-      case 0:
-      cc[0] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_0);
-      break;
-
-      case 1:
-      cc[1] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_1);
-      break;
-
-      case 2:
-      cc[2] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_2);
-      break;
-    }
-    j++;
-  }
-  */
+  std::cout <<"threshold_plane :"<< threshold_plane << '\n';
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_all;
-  pcl::toROSMsg(*cloud_all, msgs_all);
+  pcl::toROSMsg(*cloud_dwnsmp, msgs_all);
   //pub_cloud.header.frame_id = "head_rgbd_sensor_link";  //tf
   pub_all.publish(msgs_all);
-
   sensor_msgs::PointCloud2 msgs_plane;
   pcl::toROSMsg(*cloud_plane, msgs_plane);
   pub_plane.publish(msgs_plane);
@@ -276,21 +198,14 @@ void MedicineCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   sensor_msgs::PointCloud2 msgs_rest_removal;
   pcl::toROSMsg(*cloud_rest_removal, msgs_rest_removal);
   pub_rest_removal.publish(msgs_rest_removal);
-  //=========出力：cluster_0to5===================================================
-  /*
-  sensor_msgs::PointCloud2 msg_cluster_0;
-  MedicineCalendar::Output_pub(cloud_cluster_0,msg_cluster_0,pub_cluster_0);
-  sensor_msgs::PointCloud2 msg_cluster_1;
-  MedicineCalendar::Output_pub(cloud_cluster_1,msg_cluster_1,pub_cluster_1);
-  sensor_msgs::PointCloud2 msg_cluster_2;
-  */
+
 }
 
 //=======main===================================================================
 int main (int argc, char** argv){
 	// Initialize ROS
-	ros::init (argc, argv, "medicine_calendar_pcl");
-  MedicineCalendar medicine_calendar_pcl;
+	ros::init (argc, argv, "IdentifyCase");
+  IdentifyCase IdentifyCase;
 
   ros::spin();
 
