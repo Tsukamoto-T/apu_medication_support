@@ -53,21 +53,27 @@ private:
   ros::Publisher pub_plane;
   ros::Publisher pub_rest;
   ros::Publisher pub_rest_removal;
+  ros::Publisher pub_calendar;
+  ros::Publisher pub_case;
+  ros::Publisher pub_case_removal;
+
   void CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg);
 
 public:
-  float threshold_plane = 0.005;
-  int number_neighbors = 20;
-  float seddev_multhresh = 1;
+  float threshold_calendar = 0.005;
+  int calendar_number_neighbors = 20;
+  float threshold_case = 0.005;
+  int case_number_neighbors = 20;
   IdentifyCase();
   pcl::PointCloud<PointT>::Ptr Down_Sampling(pcl::PointCloud<PointT>::Ptr cloud_input);
 };
 
 IdentifyCase::IdentifyCase(){
   ros::NodeHandle nh("~");
-  nh.param<float>("threshold_plane", threshold_plane, threshold_plane);
-  nh.param<int>("number_neighbors",number_neighbors,number_neighbors);
-  nh.param<float>("seddev_multhresh",seddev_multhresh,seddev_multhresh);
+  nh.param<float>("threshold_calendar", threshold_calendar, threshold_calendar);
+  nh.param<int>("calendar_number_neighbors",calendar_number_neighbors,calendar_number_neighbors);
+  nh.param<float>("threshold_case", threshold_case, threshold_case);
+  nh.param<int>("case_number_neighbors",case_number_neighbors,case_number_neighbors);
 
   std::string hsr_topic = "/hsrb/head_rgbd_sensor/depth_registered/rectified_points";
   sub = nh.subscribe(hsr_topic, 1, &IdentifyCase::CloudCb,this);
@@ -80,6 +86,9 @@ IdentifyCase::IdentifyCase(){
   pub_plane = nh.advertise<sensor_msgs::PointCloud2>("cloud_plane", 1);
   pub_rest = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest", 1);
   pub_rest_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest_removal", 1);
+  pub_calendar = nh.advertise<sensor_msgs::PointCloud2>("cloud_calendar", 1);
+  pub_case = nh.advertise<sensor_msgs::PointCloud2>("cloud_case", 1);
+  pub_case_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_removal", 1);
 }
 
 //======================ダウンサンプリング===============================================
@@ -87,8 +96,8 @@ pcl::PointCloud<PointT>::Ptr IdentifyCase::Down_Sampling(pcl::PointCloud<PointT>
 {
   pcl::PointCloud<PointT>::Ptr cloud_vg (new pcl::PointCloud<PointT>);
   pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints(new pcl::PointCloud<pcl::PointXYZI>);
-  pcl::PointCloud<PointT>::Ptr keypoints3D(new pcl::PointCloud<PointT>());
-  pcl::PointCloud<PointT>::Ptr cloud_output(new pcl::PointCloud<PointT>());
+  pcl::PointCloud<PointT>::Ptr keypoints3D(new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_output(new pcl::PointCloud<PointT>);
   pcl::PointCloud<PointT> cloud_merged;
 
   //filterling 0.5cmのリーフサイズを使用してダウンサンプリング
@@ -140,25 +149,25 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::PointCloud<PointT>::Ptr cloud_dwnsmp(new pcl::PointCloud<PointT>);
   cloud_dwnsmp = IdentifyCase::Down_Sampling(cloud_input_rm);
 
-  //=======平面除去(平面モデル,平面検出=======================================================
+  //=======壁平面検出==============================================================
   // Create the segmentation object for the planar model and set all the parameters
-  pcl::PointCloud<PointT>::Ptr cloud_rest(new pcl::PointCloud<PointT>);
   pcl::SACSegmentation<PointT> seg;
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-  pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT>());
-  pcl::PCDWriter writer; //?
+  //pcl::PCDWriter writer; //?
   seg.setOptimizeCoefficients (true);
   seg.setModelType (pcl::SACMODEL_PLANE);
   seg.setMethodType (pcl::SAC_RANSAC);
   seg.setMaxIterations (100);  //試行回数
-  seg.setDistanceThreshold (threshold_plane);  //距離の閾値
-  std::cout << threshold_plane << '\n';
+  seg.setDistanceThreshold (threshold_calendar);  //距離の閾値
+  std::cout << threshold_calendar << '\n';
 
   // Segment the largest planar component from the remaining cloud
   seg.setInputCloud (cloud_dwnsmp);
   seg.segment (*inliers, *coefficients);
-  //=======平面除去（入力でデータから平面を除去する）=======================================================
+  //=======壁平面除去=============================================================
+  pcl::PointCloud<PointT>::Ptr cloud_rest(new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT>);
   // Extract the planar inliers from the input cloud（入力データから平面インライナを抽出）
   pcl::ExtractIndices<PointT> extract;
   extract.setInputCloud (cloud_dwnsmp); //入力データ
@@ -176,17 +185,48 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::PointCloud<PointT>::Ptr cloud_rest_removal(new pcl::PointCloud<PointT>);
   pcl::StatisticalOutlierRemoval<PointT> sor_plane;
   sor_plane.setInputCloud(cloud_rest);
-  sor_plane.setMeanK(number_neighbors);
-  sor_plane.setStddevMulThresh(seddev_multhresh);
+  sor_plane.setMeanK(calendar_number_neighbors);
+  sor_plane.setStddevMulThresh(1.0);
   sor_plane.filter(*cloud_rest_removal);
 
+  //=======カレンダー平面を検出（ケースの検出）===========================================
+  pcl::SACSegmentation<PointT> seg_2;
+  pcl::PointIndices::Ptr inliers_2 (new pcl::PointIndices);
+  pcl::ModelCoefficients::Ptr coefficients_2 (new pcl::ModelCoefficients);
+  seg_2.setOptimizeCoefficients (true);
+  seg_2.setModelType (pcl::SACMODEL_PLANE);
+  seg_2.setMethodType (pcl::SAC_RANSAC);
+  seg_2.setMaxIterations (100);  //試行回数
+  seg_2.setDistanceThreshold (threshold_case);  //距離の閾値
+  std::cout << "case" << threshold_case << '\n';
+  seg_2.setInputCloud (cloud_rest_removal);
+  seg_2.segment (*inliers_2, *coefficients_2);
 
-  std::cout <<"threshold_plane :"<< threshold_plane << '\n';
+  //カレンダー平面除去=================================================================
+  pcl::PointCloud<PointT>::Ptr cloud_calendar(new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_case(new pcl::PointCloud<PointT>);
+  pcl::ExtractIndices<PointT> extract_2;
+  extract_2.setInputCloud (cloud_rest_removal);
+  extract_2.setIndices (inliers_2);
+  extract_2.setNegative (false);
+  extract_2.filter (*cloud_calendar);
+  extract_2.setNegative (true);
+  extract_2.filter (*cloud_case);
+
+  //外れ値処理=====================================================================
+  pcl::PointCloud<PointT>::Ptr cloud_case_removal(new pcl::PointCloud<PointT>);
+  pcl::StatisticalOutlierRemoval<PointT> sor_plane_2;
+  sor_plane_2.setInputCloud(cloud_case);
+  sor_plane_2.setMeanK(case_number_neighbors);
+  sor_plane_2.setStddevMulThresh(1.0);
+  sor_plane_2.filter(*cloud_case_removal);
+
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_all;
   pcl::toROSMsg(*cloud_dwnsmp, msgs_all);
   //pub_cloud.header.frame_id = "head_rgbd_sensor_link";  //tf
   pub_all.publish(msgs_all);
+
   sensor_msgs::PointCloud2 msgs_plane;
   pcl::toROSMsg(*cloud_plane, msgs_plane);
   pub_plane.publish(msgs_plane);
@@ -199,6 +239,17 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::toROSMsg(*cloud_rest_removal, msgs_rest_removal);
   pub_rest_removal.publish(msgs_rest_removal);
 
+  sensor_msgs::PointCloud2 msgs_calendar;
+  pcl::toROSMsg(*cloud_calendar, msgs_calendar);
+  pub_calendar.publish(msgs_calendar);
+
+  sensor_msgs::PointCloud2 msgs_case;
+  pcl::toROSMsg(*cloud_case, msgs_case);
+  pub_case.publish(msgs_case);
+
+  sensor_msgs::PointCloud2 msgs_case_removal;
+  pcl::toROSMsg(*cloud_case_removal, msgs_case_removal);
+  pub_case_removal.publish(msgs_case_removal);
 }
 
 //=======main===================================================================
