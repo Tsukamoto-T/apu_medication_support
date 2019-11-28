@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="rosbag" type="play" name="play" args="--clock -l $(find medicine_calendar)/bag/medicine_calendar.bag"/>
+  <!--<node pkg="rosbag" type="play" name="play" args="- -clock -l $(find medicine_calendar)/bag/medicine_calendar.bag"/>-->
   <node name="identify_case" pkg="medicine_calendar" type="identify_case" output="screen">
     <param name="threshold_calendar" value="0.007"/> <!--値が小さいほど平面の条件が小さくなる-->
     <param name="calendar_number_neighbors" value="20"/>
-    <param name="threshold_case" value="0.017"/>
+    <param name="threshold_case" value="0.014"/>
     <param name="case_number_neighbors" value="20"/>
+    <param name="cluster_tolerance" value="0.01"/>
+    <param name="max_cluster_size" value="300"/>
   </node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/identify_case.rviz" required="true" output="screen" />
 </launch>

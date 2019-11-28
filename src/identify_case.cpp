@@ -53,9 +53,22 @@ private:
   ros::Publisher pub_plane;
   ros::Publisher pub_rest;
   ros::Publisher pub_rest_removal;
+  ros::Publisher pub_rest_trans;
   ros::Publisher pub_calendar;
-  ros::Publisher pub_case;
+  ros::Publisher pub_case;;
   ros::Publisher pub_case_removal;
+  ros::Publisher pub_point;
+
+  ros::Publisher pub_cluster_0;
+  ros::Publisher pub_cluster_1;
+  ros::Publisher pub_cluster_2;
+  ros::Publisher pub_cluster_3;
+  ros::Publisher pub_cluster_4;
+  ros::Publisher pub_cluster_5;
+  ros::Publisher pub_cluster_6;
+  ros::Publisher pub_cluster_7;
+
+  ros::Publisher pub_centroid_0;
 
   void CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg);
 
@@ -64,8 +77,11 @@ public:
   int calendar_number_neighbors = 20;
   float threshold_case = 0.005;
   int case_number_neighbors = 20;
+  float cluster_tolerance = 0.005;
+  int max_cluster_size = 20000;
   IdentifyCase();
   pcl::PointCloud<PointT>::Ptr Down_Sampling(pcl::PointCloud<PointT>::Ptr cloud_input);
+  void Output_pub(pcl::PointCloud<PointT>::Ptr cloud_ ,sensor_msgs::PointCloud2 msgs_,ros::Publisher pub_);
 };
 
 IdentifyCase::IdentifyCase(){
@@ -74,6 +90,8 @@ IdentifyCase::IdentifyCase(){
   nh.param<int>("calendar_number_neighbors",calendar_number_neighbors,calendar_number_neighbors);
   nh.param<float>("threshold_case", threshold_case, threshold_case);
   nh.param<int>("case_number_neighbors",case_number_neighbors,case_number_neighbors);
+  nh.param<float>("cluster_tolerance",cluster_tolerance,cluster_tolerance);
+  nh.param<int>("max_cluster_size",max_cluster_size,max_cluster_size);
 
   std::string hsr_topic = "/hsrb/head_rgbd_sensor/depth_registered/rectified_points";
   sub = nh.subscribe(hsr_topic, 1, &IdentifyCase::CloudCb,this);
@@ -86,58 +104,49 @@ IdentifyCase::IdentifyCase(){
   pub_plane = nh.advertise<sensor_msgs::PointCloud2>("cloud_plane", 1);
   pub_rest = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest", 1);
   pub_rest_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest_removal", 1);
+  pub_rest_trans = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest_trans", 1);
   pub_calendar = nh.advertise<sensor_msgs::PointCloud2>("cloud_calendar", 1);
   pub_case = nh.advertise<sensor_msgs::PointCloud2>("cloud_case", 1);
   pub_case_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_removal", 1);
+  pub_point = nh.advertise<sensor_msgs::PointCloud2>("cloud_point", 1);
+
+  pub_cluster_0 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_0", 1);
+  pub_cluster_1 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_1", 1);
+  pub_cluster_2 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_2", 1);
+  pub_cluster_3 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_3", 1);
+  pub_cluster_4 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_4", 1);
+  pub_cluster_5 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_5", 1);
+  pub_cluster_6 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_6", 1);
+  pub_cluster_7 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_7", 1);
+
+  pub_centroid_0 = nh.advertise<sensor_msgs::PointCloud2>("cloud_centroid_0", 1);
+
 }
 
-//======================ダウンサンプリング===============================================
+//======================ダウンサンプリング&特徴点抽出===============================================
 pcl::PointCloud<PointT>::Ptr IdentifyCase::Down_Sampling(pcl::PointCloud<PointT>::Ptr  cloud_input)
 {
+  //==========ダウンサンプリング=======================================================
   pcl::PointCloud<PointT>::Ptr cloud_vg (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<pcl::PointXYZI>::Ptr keypoints(new pcl::PointCloud<pcl::PointXYZI>);
-  pcl::PointCloud<PointT>::Ptr keypoints3D(new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_output(new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT> cloud_merged;
-
-  //filterling 0.5cmのリーフサイズを使用してダウンサンプリング
   pcl::VoxelGrid<PointT> vg;
   vg.setInputCloud (cloud_input);
-  vg.setLeafSize (0.005f, 0.005f, 0.005f);
+  vg.setLeafSize (0.005f, 0.005f, 0.005f); //リーフサイズ0.5cm
   vg.filter (*cloud_vg);
 
-  //特徴点抽出
-  pcl::HarrisKeypoint3D<PointT,pcl::PointXYZI> Harris;
-  Harris.setInputCloud(cloud_input);
-  Harris.setNonMaxSupression(true);
-  Harris.setRadius(0.01);
-
-  Harris.compute(*keypoints);
-
-  PointT key; //新しく点を格納するところ
-
-  double min=0.0;
-  double max=0.0;
-
-  //Harris検出器をかけていく
-  for(pcl::PointCloud<pcl::PointXYZI>::iterator i = keypoints->begin(); i!=keypoints->end(); i++){
-    key = PointT((*i).x,(*i).y,(*i).z);
-    if ((*i).intensity>max ){
-      max = (*i).intensity;
-    }
-    if ((*i).intensity<min){
-      min = (*i).intensity;
-    }
-    keypoints3D->push_back(key);
-  }
-
-  cloud_merged = *cloud_vg;
-  cloud_merged += *keypoints3D;
-
-  pcl::copyPointCloud(cloud_merged,*cloud_output);
-  return cloud_output;
+  return cloud_vg;
 }
 
+//========出力関数=========================================================================
+void IdentifyCase::Output_pub(pcl::PointCloud<PointT>::Ptr cloud_,sensor_msgs::PointCloud2 msgs_,ros::Publisher pub_){
+  if(cloud_->size() <= 0){
+    ROS_INFO("Size (%d)",cloud_);
+  }
+  pcl::toROSMsg(*cloud_, msgs_);
+  msgs_.header.frame_id = "head_rgbd_sensor_rgb_frame";
+  pub_.publish(msgs_);
+}
+
+//=========コールバック==============================================================
 void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   std::cout << "callback_start" << std::endl;
   pcl::PointCloud<PointT>::Ptr cloud_all(new pcl::PointCloud<PointT>);
@@ -160,7 +169,6 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   seg.setMethodType (pcl::SAC_RANSAC);
   seg.setMaxIterations (100);  //試行回数
   seg.setDistanceThreshold (threshold_calendar);  //距離の閾値
-  std::cout << threshold_calendar << '\n';
 
   // Segment the largest planar component from the remaining cloud
   seg.setInputCloud (cloud_dwnsmp);
@@ -181,7 +189,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   extract.filter (*cloud_rest);
   //std::cout << "PointCloud representing the rest component: " << cloud_rest->points.size () << " data points." << std::endl;
 
-  //外れ値処理=====================================================================
+  //=====外れ値処理=====================================================================
   pcl::PointCloud<PointT>::Ptr cloud_rest_removal(new pcl::PointCloud<PointT>);
   pcl::StatisticalOutlierRemoval<PointT> sor_plane;
   sor_plane.setInputCloud(cloud_rest);
@@ -198,15 +206,51 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   seg_2.setMethodType (pcl::SAC_RANSAC);
   seg_2.setMaxIterations (100);  //試行回数
   seg_2.setDistanceThreshold (threshold_case);  //距離の閾値
-  std::cout << "case" << threshold_case << '\n';
   seg_2.setInputCloud (cloud_rest_removal);
   seg_2.segment (*inliers_2, *coefficients_2);
+
+  //カレンダー平面を求める=================================================================
+  pcl::PointCloud<PointT>::Ptr cloud_calendar_pre(new pcl::PointCloud<PointT>);
+  pcl::ExtractIndices<PointT> extract_2;
+  extract_2.setInputCloud (cloud_rest_removal);
+  extract_2.setIndices (inliers_2);
+  extract_2.setNegative (false);
+  extract_2.filter (*cloud_calendar_pre);
+
+  //===カレンダーの重心を原点に移動===================================================
+  //---計算----------------------------------------------------------------------
+  tf::Transform transform_translation;
+	static tf::TransformBroadcaster tf_bc_translation;
+
+  double x_plane  = 0.0;
+	double y_plane  = 0.0;
+	double z_plane  = 0.0;
+	for(size_t i = 0; i< cloud_calendar_pre->size(); ++i)
+	{
+		x_plane += cloud_calendar_pre->points[i].x;
+		y_plane += cloud_calendar_pre->points[i].y;
+		z_plane += cloud_calendar_pre->points[i].z;
+	}
+
+  x_plane /= static_cast<int>(cloud_calendar_pre->size());
+  y_plane /= static_cast<int>(cloud_calendar_pre->size());
+  z_plane /= static_cast<int>(cloud_calendar_pre->size());
+
+  //---移動後のカレンダーにtfを貼る--------------------------------------------------------------
+	transform_translation.setOrigin(tf::Vector3(x_plane, y_plane, z_plane));
+	transform_translation.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+	tf_bc_translation.sendTransform(tf::StampedTransform(transform_translation, ros::Time::now(), "head_rgbd_sensor_rgb_frame", "trans_frame"));
+
+  //----座標移動-----------------------------------------------------------------
+  Eigen::Affine3f affine_translation = Eigen::Affine3f::Identity();
+	affine_translation.translation() << -x_plane, -y_plane, -z_plane;
+  pcl::PointCloud<PointT>::Ptr cloud_rest_trans(new pcl::PointCloud<PointT>);
+	pcl::transformPointCloud(*cloud_rest_removal, *cloud_rest_trans, affine_translation);
 
   //カレンダー平面除去=================================================================
   pcl::PointCloud<PointT>::Ptr cloud_calendar(new pcl::PointCloud<PointT>);
   pcl::PointCloud<PointT>::Ptr cloud_case(new pcl::PointCloud<PointT>);
-  pcl::ExtractIndices<PointT> extract_2;
-  extract_2.setInputCloud (cloud_rest_removal);
+  extract_2.setInputCloud (cloud_rest_trans);
   extract_2.setIndices (inliers_2);
   extract_2.setNegative (false);
   extract_2.filter (*cloud_calendar);
@@ -221,10 +265,126 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   sor_plane_2.setStddevMulThresh(1.0);
   sor_plane_2.filter(*cloud_case_removal);
 
+  //===カレンダーの左上の座標を求める=====================================================
+  double min_sum_point = 0.0;
+  int min_i;
+
+  for(size_t i = 0; i< cloud_calendar->size(); ++i)
+  {
+    if(min_sum_point > (cloud_calendar->points[i].x + cloud_calendar->points[i].y)){
+      min_sum_point = cloud_calendar->points[i].x + cloud_calendar->points[i].y;
+      min_i=(int)i;
+    }
+  }
+
+  //---出力----------------------------------------------------------------------
+  pcl::PointCloud<PointT>::Ptr st_point(new pcl::PointCloud<PointT>);
+  pcl::PointXYZRGB point;
+  point.x = cloud_calendar->points[min_i].x;
+  point.y = cloud_calendar->points[min_i].y;
+  point.z = cloud_calendar->points[min_i].z;
+  point.r = cloud_calendar->points[min_i].r;
+  point.g = cloud_calendar->points[min_i].g;
+  point.b = cloud_calendar->points[min_i].b;
+  st_point->points.push_back(point);
+
+  //================クラスタリング====================================================
+  pcl::search::KdTree<PointT>::Ptr cluster_tree (new pcl::search::KdTree<PointT>);
+  cluster_tree->setInputCloud(cloud_case_removal);
+  std::vector<pcl::PointIndices> cluster_indices;
+  pcl::EuclideanClusterExtraction<PointT> ec;
+  ec.setClusterTolerance (cluster_tolerance);//探索する半径の設定
+  ec.setMinClusterSize (70);//最小点の数を設定
+  ec.setMaxClusterSize (max_cluster_size);//最大の点の数を設定
+  ec.setSearchMethod (cluster_tree);//検索先のポインタを指定
+  ec.setInputCloud (cloud_case_removal);//点群を入力
+  ec.extract (cluster_indices);//クラスター情報を出力
+
+  int j = 0;
+
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_0 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_1 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_2 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_3 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_4 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_5 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_6 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_7 (new pcl::PointCloud<PointT>);
+
+  int cc[8] = {10000,10000,10000,10000,10000,10000,10000,10000};
+
+  for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();it != cluster_indices.end(); ++it){
+    pcl::PointCloud<PointT>::Ptr cloud_cluster (new pcl::PointCloud<PointT>);
+    for(std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); pit++){
+      cloud_cluster->points.push_back(cloud_case_removal->points[*pit]);
+    }
+
+    cloud_cluster->width = cloud_cluster->points.size();
+    cloud_cluster->height = 1;
+    cloud_cluster->is_dense = true;
+
+    switch(j){
+      case 0:
+      cc[0] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_0);
+      break;
+
+      case 1:
+      cc[1] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_1);
+      break;
+
+      case 2:
+      cc[2] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_2);
+      break;
+
+      case 3:
+      cc[3] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_3);
+      break;
+
+      case 4:
+      cc[4] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_4);
+      break;
+
+      case 5:
+      cc[5] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_5);
+      break;
+
+      case 6:
+      cc[6] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_6);
+      break;
+
+      case 7:
+      cc[7] = cloud_cluster->points.size();
+      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_7);
+      break;
+
+    }
+    j++;
+  }
+  std::cout<<" "<<cloud_cluster_0->points.size()<<" "<<cloud_cluster_1->points.size()<<" "<<cloud_cluster_2->points.size()<<" "<<cloud_cluster_3->points.size()<<" "<<cloud_cluster_4->points.size()<<" "<<cloud_cluster_5->points.size()<<" "<<cloud_cluster_6->points.size()<<" "<<cloud_cluster_7->points.size()<<std::endl;
+
+  //========クラスタごとの重心を求める==================================================
+  Eigen::Vector4f centroid_0;
+  pcl::compute3DCentroid(*cloud_cluster_0,centroid_0);
+
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_centroid_0(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointXYZ cent_0;
+  cent_0.x = centroid_0[0];
+  cent_0.y = centroid_0[1];
+  cent_0.z = centroid_0[2];
+  cloud_centroid_0->points.push_back(cent_0);
+
+
+
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_all;
   pcl::toROSMsg(*cloud_dwnsmp, msgs_all);
-  //pub_cloud.header.frame_id = "head_rgbd_sensor_link";  //tf
   pub_all.publish(msgs_all);
 
   sensor_msgs::PointCloud2 msgs_plane;
@@ -239,6 +399,10 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::toROSMsg(*cloud_rest_removal, msgs_rest_removal);
   pub_rest_removal.publish(msgs_rest_removal);
 
+  sensor_msgs::PointCloud2 msgs_rest_trans;
+  pcl::toROSMsg(*cloud_rest_trans, msgs_rest_trans);
+  pub_rest_trans.publish(msgs_rest_trans);
+
   sensor_msgs::PointCloud2 msgs_calendar;
   pcl::toROSMsg(*cloud_calendar, msgs_calendar);
   pub_calendar.publish(msgs_calendar);
@@ -250,6 +414,34 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   sensor_msgs::PointCloud2 msgs_case_removal;
   pcl::toROSMsg(*cloud_case_removal, msgs_case_removal);
   pub_case_removal.publish(msgs_case_removal);
+
+  sensor_msgs::PointCloud2 msgs_point;
+  pcl::toROSMsg(*st_point, msgs_point);
+  msgs_point.header.frame_id = "head_rgbd_sensor_rgb_frame";
+  pub_point.publish(msgs_point);
+
+  sensor_msgs::PointCloud2 msgs_centroid_0;
+  pcl::toROSMsg(*cloud_centroid_0, msgs_centroid_0);
+  msgs_centroid_0.header.frame_id = "head_rgbd_sensor_rgb_frame";
+  pub_centroid_0.publish(msgs_centroid_0);
+
+  //クラスタの出力-------------------------------------------------------------------
+  sensor_msgs::PointCloud2 msgs_cluster_0;
+  IdentifyCase::Output_pub(cloud_cluster_0,msgs_cluster_0,pub_cluster_0);
+  sensor_msgs::PointCloud2 msgs_cluster_1;
+  IdentifyCase::Output_pub(cloud_cluster_1,msgs_cluster_1,pub_cluster_1);
+  sensor_msgs::PointCloud2 msgs_cluster_2;
+  IdentifyCase::Output_pub(cloud_cluster_2,msgs_cluster_2,pub_cluster_2);
+  sensor_msgs::PointCloud2 msgs_cluster_3;
+  IdentifyCase::Output_pub(cloud_cluster_3,msgs_cluster_3,pub_cluster_3);
+  sensor_msgs::PointCloud2 msgs_cluster_4;
+  IdentifyCase::Output_pub(cloud_cluster_4,msgs_cluster_4,pub_cluster_4);
+  sensor_msgs::PointCloud2 msgs_cluster_5;
+  IdentifyCase::Output_pub(cloud_cluster_5,msgs_cluster_5,pub_cluster_5);
+  sensor_msgs::PointCloud2 msgs_cluster_6;
+  IdentifyCase::Output_pub(cloud_cluster_6,msgs_cluster_6,pub_cluster_6);
+  sensor_msgs::PointCloud2 msgs_cluster_7;
+  IdentifyCase::Output_pub(cloud_cluster_7,msgs_cluster_7,pub_cluster_7);
 }
 
 //=======main===================================================================
@@ -258,7 +450,13 @@ int main (int argc, char** argv){
 	ros::init (argc, argv, "IdentifyCase");
   IdentifyCase IdentifyCase;
 
-  ros::spin();
+  ros::Rate rate(1);
+  while(ros::ok()){
+    ros::spinOnce();
+    rate.sleep();
+  }
+
+  //ros::spin();
 
 	return 0;
 }
