@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+  <node pkg="rosbag" type="play" name="play" args="--clock -l $(find medicine_calendar)/bag/medicine_calendar.bag"/>
   <node name="medicine_calendar_pcl" pkg="medicine_calendar" type="medicine_calendar_pcl" output="screen">
     <param name="threshold_plane" value="0.02"/>
     <param name="cluster_tolerance" value="0.01"/>
