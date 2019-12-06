@@ -5,11 +5,11 @@ medicine_calendar:
   child_frame_id: "medicine_calendar"
   transform:
     translation:
-      x: -0.1
-      y: 2.0
+      x: 1.71
+      y: -1.29
       z: 0.0
     rotation:
       x: 0.0
       y: 0.0
-      z: -0.707
-      w: 0.707
+      z: -0.713
+      w: 0.7

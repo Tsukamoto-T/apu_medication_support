@@ -19,8 +19,5 @@ catkin_package(
 
 include_directories(${catkin_INCLUDE_DIRS})
 
-add_executable(medicine_calendar_pcl src/medicine_calendar_pcl.cpp)
-target_link_libraries(medicine_calendar_pcl ${catkin_LIBRARIES})
-
 add_executable(identify_case src/identify_case.cpp)
 target_link_libraries(identify_case ${catkin_LIBRARIES})
