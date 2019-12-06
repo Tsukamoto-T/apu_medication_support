@@ -1,7 +1,7 @@
 #include <string>
 #include <stdio.h>
 #include <ros/ros.h>
-#include <tf/transform_listener.h>
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -9,7 +9,6 @@
 #include <time.h>
 #include <cstdlib>
 #include <cmath>
-#include <iostream>
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -18,7 +17,6 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
-#include <pcl/search/kdtree.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/common/projection_matrix.h>
@@ -26,12 +24,11 @@
 #include <pcl/common/transforms.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-#include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/conditional_removal.h>
 #include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/keypoints/harris_3d.h>
+#include <pcl/search/kdtree.h>
 #include <pcl/registration/icp.h>
 
 #include <pcl_ros/point_cloud.h>
@@ -41,9 +38,8 @@
 #include <fstream>
 #include <geometry_msgs/PointStamped.h>
 #include <pcl_msgs/ModelCoefficients.h>
-#include <pcl/features/normal_3d_omp.h>
 #include <tf/transform_broadcaster.h>
-#include <sensor_msgs/PointCloud2.h>
+#include <tf/transform_listener.h>
 
 typedef pcl::PointXYZRGB PointT;
 
@@ -500,6 +496,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     transform_.setOrigin(tf::Vector3(suction_point.x, suction_point.y, suction_point.z));
     transform_.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
     tf_.sendTransform(tf::StampedTransform(transform_, ros::Time::now(), "head_rgbd_sensor_rgb_frame", "suction_case_frame"));
+
 
     //--------出力----------------------------------------------------------------
     sensor_msgs::PointCloud2 msgs_suction_point;

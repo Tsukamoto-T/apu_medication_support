@@ -10,7 +10,6 @@ Panels:
         - /PointCloud212
         - /PointCloud213
         - /PointCloud214
-        - /TF2
       Splitter Ratio: 0.605187297
     Tree Height: 1656
   - Class: rviz/Selection
@@ -490,460 +489,55 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        arm_flex_link:
-          Value: false
-        arm_lift_link:
-          Value: false
-        arm_roll_link:
-          Value: false
-        base_b_bumper_link:
-          Value: false
-        base_f_bumper_link:
-          Value: false
-        base_footprint:
-          Value: false
-        base_footprint_wheel:
-          Value: false
-        base_imu_frame:
-          Value: false
-        base_l_drive_wheel_link:
-          Value: false
-        base_l_passive_wheel_x_frame:
-          Value: false
-        base_l_passive_wheel_y_frame:
-          Value: false
-        base_l_passive_wheel_z_link:
-          Value: false
-        base_link:
-          Value: true
-        base_r_drive_wheel_link:
-          Value: false
-        base_r_passive_wheel_x_frame:
-          Value: false
-        base_r_passive_wheel_y_frame:
-          Value: false
-        base_r_passive_wheel_z_link:
-          Value: false
-        base_range_sensor_link:
-          Value: false
-        base_roll_link:
-          Value: false
-        hand_camera_frame:
-          Value: false
-        hand_camera_gazebo_frame:
-          Value: false
-        hand_l_distal_link:
-          Value: false
-        hand_l_finger_tip_frame:
-          Value: false
-        hand_l_finger_vacuum_frame:
-          Value: false
-        hand_l_mimic_distal_link:
-          Value: false
-        hand_l_proximal_link:
-          Value: false
-        hand_l_spring_proximal_link:
-          Value: false
-        hand_motor_dummy_link:
-          Value: false
-        hand_palm_link:
-          Value: false
-        hand_r_distal_link:
-          Value: false
-        hand_r_finger_tip_frame:
-          Value: false
-        hand_r_mimic_distal_link:
-          Value: false
-        hand_r_proximal_link:
-          Value: false
-        hand_r_spring_proximal_link:
-          Value: false
-        head_center_camera_frame:
-          Value: false
-        head_center_camera_gazebo_frame:
-          Value: false
-        head_l_stereo_camera_frame:
-          Value: false
-        head_l_stereo_camera_gazebo_frame:
-          Value: false
-        head_l_stereo_camera_link:
-          Value: false
-        head_pan_link:
-          Value: false
-        head_r_stereo_camera_gazebo_frame:
-          Value: false
-        head_r_stereo_camera_link:
-          Value: false
-        head_rgbd_sensor_gazebo_frame:
-          Value: false
-        head_rgbd_sensor_link:
-          Value: false
-        head_rgbd_sensor_rgb_frame:
-          Value: false
-        head_tilt_link:
-          Value: false
-        map:
-          Value: true
-        medicine_calendar:
-          Value: true
-        odom:
-          Value: false
-        torso_lift_link:
-          Value: false
-        wrist_flex_link:
-          Value: false
-        wrist_ft_sensor_frame:
-          Value: false
-        wrist_ft_sensor_mount_link:
-          Value: false
-        wrist_roll_link:
-          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          medicine_calendar:
-            {}
-          odom:
-            base_footprint:
-              base_link:
-                arm_lift_link:
-                  arm_flex_link:
-                    arm_roll_link:
-                      wrist_flex_link:
-                        wrist_ft_sensor_mount_link:
-                          wrist_ft_sensor_frame:
-                            wrist_roll_link:
-                              hand_palm_link:
-                                hand_camera_frame:
-                                  hand_camera_gazebo_frame:
-                                    {}
-                                hand_l_proximal_link:
-                                  hand_l_spring_proximal_link:
-                                    hand_l_mimic_distal_link:
-                                      hand_l_distal_link:
-                                        hand_l_finger_tip_frame:
-                                          {}
-                                        hand_l_finger_vacuum_frame:
-                                          {}
-                                hand_motor_dummy_link:
-                                  {}
-                                hand_r_proximal_link:
-                                  hand_r_spring_proximal_link:
-                                    hand_r_mimic_distal_link:
-                                      hand_r_distal_link:
-                                        hand_r_finger_tip_frame:
-                                          {}
-                base_b_bumper_link:
-                  {}
-                base_f_bumper_link:
-                  {}
-                base_imu_frame:
-                  {}
-                base_range_sensor_link:
-                  {}
-                base_roll_link:
-                  base_l_drive_wheel_link:
-                    {}
-                  base_l_passive_wheel_x_frame:
-                    base_l_passive_wheel_y_frame:
-                      base_l_passive_wheel_z_link:
-                        {}
-                  base_r_drive_wheel_link:
-                    {}
-                  base_r_passive_wheel_x_frame:
-                    base_r_passive_wheel_y_frame:
-                      base_r_passive_wheel_z_link:
-                        {}
-                torso_lift_link:
-                  head_pan_link:
-                    head_tilt_link:
-                      head_center_camera_frame:
-                        head_center_camera_gazebo_frame:
-                          {}
-                      head_l_stereo_camera_link:
-                        head_l_stereo_camera_frame:
-                          head_rgbd_sensor_rgb_frame:
-                            {}
-                        head_l_stereo_camera_gazebo_frame:
-                          {}
-                      head_r_stereo_camera_link:
-                        head_r_stereo_camera_gazebo_frame:
-                          {}
-                      head_rgbd_sensor_link:
-                        head_rgbd_sensor_gazebo_frame:
-                          {}
-            base_footprint_wheel:
-              {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        arm_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        arm_lift_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        arm_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_b_bumper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_f_bumper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_imu_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_drive_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_l_passive_wheel_x_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_passive_wheel_y_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_passive_wheel_z_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_r_drive_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_r_passive_wheel_x_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_r_passive_wheel_y_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_r_passive_wheel_z_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_range_sensor_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_camera_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_l_finger_tip_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_finger_vacuum_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_l_mimic_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_spring_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_motor_dummy_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_palm_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_r_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_r_finger_tip_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_mimic_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_spring_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_center_camera_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_center_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_l_stereo_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_l_stereo_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_pan_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_r_stereo_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_r_stereo_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_rgbd_sensor_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_rgbd_sensor_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_tilt_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        torso_lift_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_ft_sensor_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        wrist_ft_sensor_mount_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        wrist_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /static_distance_map_ref
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /static_obstacle_map_ref
       Unreliable: false
       Use Timestamp: false
-      Value: true
-    - Alpha: 1
-      Class: rviz/GridCells
-      Color: 25; 255; 0
-      Enabled: true
-      Name: GridCells
-      Topic: ""
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -969,7 +563,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.69780397
+      Distance: 0.633292913
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -984,10 +578,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.16479674
+      Pitch: 0.219796762
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.17246389
+      Yaw: 3.32064295
     Saved:
       - Class: rviz/Orbit
         Distance: 1.23777568
