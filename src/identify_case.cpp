@@ -41,6 +41,10 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
+#include <geometry_msgs/TransformStamped.h>
+
 typedef pcl::PointXYZRGB PointT;
 
 class IdentifyCase{
@@ -154,7 +158,7 @@ void IdentifyCase::Center_case(pcl::PointCloud<PointT>::Ptr cloud_cluster_,pcl::
       cent_y = cloud_cluster_->points[i].y;
     }
   }
-  cent_y +=  0.007;
+  cent_y +=  0.01;
 
   double cent_x = 0.0;
   double cent_i = 0;
@@ -493,9 +497,28 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     cloud_suction_point->points.push_back(suction_point);
 
     //------ｔｆをはる------------------------------------------------------------------
+    /*--tf----
     transform_.setOrigin(tf::Vector3(suction_point.x, suction_point.y, suction_point.z));
     transform_.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
     tf_.sendTransform(tf::StampedTransform(transform_, ros::Time::now(), "head_rgbd_sensor_rgb_frame", "suction_case_frame"));
+    */
+    //----tf2_ros-----
+    tf2_ros::TransformBroadcaster br;
+    geometry_msgs::TransformStamped transformStamped;
+
+    transformStamped.header.frame_id = "head_rgbd_sensor_rgb_frame";
+    transformStamped.child_frame_id =  "suction_case_frame";
+    transformStamped.transform.translation.x = suction_point.x;
+    transformStamped.transform.translation.y = suction_point.y;
+    transformStamped.transform.translation.z = suction_point.z;
+
+    transformStamped.transform.rotation.x = 0.0;
+    transformStamped.transform.rotation.y = 0.0;
+    transformStamped.transform.rotation.z = 0.0;
+    transformStamped.transform.rotation.w = 1.0;
+
+    transformStamped.header.stamp = ros::Time::now();
+    br.sendTransform(transformStamped);
 
 
     //--------出力----------------------------------------------------------------
