@@ -28,6 +28,7 @@ class MoveToLocations(object):
         listener = tf2_ros.TransformListener(self._tf2_buffer)
         try:
             self._whole_body.move_to_go()
+            trans_time = rospy.Time.now()
             trans_origin = self._tf2_buffer.lookup_transform('map','base_footprint',rospy.Time.now(),rospy.Duration(20))
             trans = self._tf2_buffer.lookup_transform('base_footprint',frame_ids,rospy.Time.now(),rospy.Duration(20)) #１つ目の引数のx軸からのtransform
             _yaw = math.atan2(trans.transform.translation.y, trans.transform.translation.x)
@@ -52,7 +53,7 @@ class MoveToLocations(object):
                         break
                 if self._omni_base.is_succeeded():
                     self._tts.say(u'移動しました')
-                    return trans_origin
+                    return trans_time , trans_origin
             except Exception as e:
                 rospy.loginfo("move Faild :{}".format(e))
                 continue

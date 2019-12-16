@@ -12,8 +12,8 @@
     <param name="st_x" value="0.075"/>
     <param name="st_y" value="0.06"/>
     <param name="st_z" value="0.035"/>
-    <param name="set_week" value="1"/>
-    <param name="set_time" value="19"/>
+    <param name="set_week" value="4"/>
+    <param name="set_time" value="8"/>
   </node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/sample.rviz" required="true" output="screen" />
   <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml" ns="medi_calendar" />
