@@ -26,7 +26,7 @@ class ReturnToLocations(object):
         self._tf2_buffer = self._robot._get_tf2_buffer()
         listener = tf2_ros.TransformListener(self._tf2_buffer)
 
-    def _return_move(self,trans_time,trans_origin):
+    def _return_move(self,trans_origin):
         #look_tf
         try:
             self._whole_body.move_to_go()

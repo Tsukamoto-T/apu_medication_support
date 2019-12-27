@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="medicine_calendar" />
-</launch>

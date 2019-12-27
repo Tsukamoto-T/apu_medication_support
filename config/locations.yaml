@@ -5,11 +5,27 @@ medicine_calendar:
   child_frame_id: "medicine_calendar"
   transform:
     translation:
-      x: 0.215
-      y: 0.603
+      x: 0.482
+      y: 0.6
       z: 0.0
     rotation:
       x: 0.0
       y: 0.0
-      z: 0.708
-      w: 0.706
+      z: 0.715
+      w: 0.70
+
+### living_room
+living_room:
+  header:
+    frame_id: "map"
+  child_frame_id: "living_room"
+  transform:
+    translation:
+      x: -0.068
+      y: -0.203
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 1.0
+      w: -0.0015

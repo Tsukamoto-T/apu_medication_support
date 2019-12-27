@@ -7,4 +7,4 @@ if __name__ == '__main__':
     rospy.init_node('move_to_map')
     rospy.sleep(2)
     mtl = move_to_locations.MoveToLocations()
-    trans_time , trans_origin = mtl._move('map')
+    trans_origin = mtl._move('map')

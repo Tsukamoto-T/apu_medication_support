@@ -3,4 +3,5 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/sample.rviz" required="true" output="screen" />
   <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml" ns="medi_calendar" />
   <node pkg="tf2_ros" type="static_transform_publisher" name="medicine_calendar" args="/medi_calendar/medicine_calendar"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="living_room" args="/medi_calendar/living_room"/>
 </launch>
