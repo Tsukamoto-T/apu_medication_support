@@ -58,15 +58,7 @@ private:
   ros::Publisher pub_case;;
   ros::Publisher pub_case_removal;
 
-  ros::Publisher pub_cluster_0;
-  ros::Publisher pub_cluster_1;
-  ros::Publisher pub_cluster_2;
-  ros::Publisher pub_cluster_3;
-  ros::Publisher pub_cluster_4;
-  ros::Publisher pub_cluster_5;
-  ros::Publisher pub_cluster_6;
-  ros::Publisher pub_cluster_7;
-
+  ros::Publisher pub_cluster_all;
   ros::Publisher pub_case_points;
   ros::Publisher pub_st_point;
   ros::Publisher pub_time_point;
@@ -123,15 +115,7 @@ IdentifyCase::IdentifyCase(){
   pub_case = nh.advertise<sensor_msgs::PointCloud2>("cloud_case", 1);
   pub_case_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_removal", 1);
 
-  pub_cluster_0 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_0", 1);
-  pub_cluster_1 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_1", 1);
-  pub_cluster_2 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_2", 1);
-  pub_cluster_3 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_3", 1);
-  pub_cluster_4 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_4", 1);
-  pub_cluster_5 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_5", 1);
-  pub_cluster_6 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_6", 1);
-  pub_cluster_7 = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_7", 1);
-
+  pub_cluster_all = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_all", 1);
   pub_case_points = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_points", 1);
   pub_st_point = nh.advertise<sensor_msgs::PointCloud2>("cloud_st_point", 1);
   pub_time_point = nh.advertise<sensor_msgs::PointCloud2>("cloud_time_point", 1);
@@ -277,16 +261,10 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
 
   int j = 0;
 
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_0 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_1 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_2 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_3 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_4 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_5 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_6 (new pcl::PointCloud<PointT>);
-  pcl::PointCloud<PointT>::Ptr cloud_cluster_7 (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_cluster_all (new pcl::PointCloud<PointT>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_case_points(new pcl::PointCloud<pcl::PointXYZ>);
 
-  int cc[8] = {10000,10000,10000,10000,10000,10000,10000,10000};
+  int cc[28] = {10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000,10000};
 
   for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin();it != cluster_indices.end(); ++it){
     pcl::PointCloud<PointT>::Ptr cloud_cluster (new pcl::PointCloud<PointT>);
@@ -297,64 +275,14 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     cloud_cluster->width = cloud_cluster->points.size();
     cloud_cluster->height = 1;
     cloud_cluster->is_dense = true;
+    cc[j] = cloud_cluster->points.size();
+    std::cout << cc[j] << std::endl;
+    *cloud_cluster_all = (*cloud_cluster_all) + (*cloud_cluster);
 
-    switch(j){
-      case 0:
-      cc[0] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_0);
-      break;
-
-      case 1:
-      cc[1] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_1);
-      break;
-
-      case 2:
-      cc[2] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_2);
-      break;
-
-      case 3:
-      cc[3] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_3);
-      break;
-
-      case 4:
-      cc[4] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_4);
-      break;
-
-      case 5:
-      cc[5] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_5);
-      break;
-
-      case 6:
-      cc[6] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_6);
-      break;
-
-      case 7:
-      cc[7] = cloud_cluster->points.size();
-      pcl::copyPointCloud(*cloud_cluster,*cloud_cluster_7);
-      break;
-
-    }
+    //========クラスタごとの把持位置を求める==================================================
+    IdentifyCase::Center_case(cloud_cluster,cloud_case_points);
     j++;
   }
-  std::cout<<" "<<cloud_cluster_0->points.size()<<" "<<cloud_cluster_1->points.size()<<" "<<cloud_cluster_2->points.size()<<" "<<cloud_cluster_3->points.size()<<" "<<cloud_cluster_4->points.size()<<" "<<cloud_cluster_5->points.size()<<" "<<cloud_cluster_6->points.size()<<" "<<cloud_cluster_7->points.size()<<std::endl;
-
-  //========クラスタごとの把持位置を求める==================================================
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_case_points(new pcl::PointCloud<pcl::PointXYZ>);
-
-  IdentifyCase::Center_case(cloud_cluster_0,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_1,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_2,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_3,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_4,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_5,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_6,cloud_case_points);
-  IdentifyCase::Center_case(cloud_cluster_7,cloud_case_points);
 
   //===カレンダーの左上の座標を求める=====================================================
   double min_sum_point = 0.0;
@@ -559,24 +487,8 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::toROSMsg(*cloud_case_removal, msgs_case_removal);
   pub_case_removal.publish(msgs_case_removal);
 
-  //クラスタの出力-------------------------------------------------------------------
-  sensor_msgs::PointCloud2 msgs_cluster_0;
-  IdentifyCase::Output_pub(cloud_cluster_0,msgs_cluster_0,pub_cluster_0);
-  sensor_msgs::PointCloud2 msgs_cluster_1;
-  IdentifyCase::Output_pub(cloud_cluster_1,msgs_cluster_1,pub_cluster_1);
-  sensor_msgs::PointCloud2 msgs_cluster_2;
-  IdentifyCase::Output_pub(cloud_cluster_2,msgs_cluster_2,pub_cluster_2);
-  sensor_msgs::PointCloud2 msgs_cluster_3;
-  IdentifyCase::Output_pub(cloud_cluster_3,msgs_cluster_3,pub_cluster_3);
-  sensor_msgs::PointCloud2 msgs_cluster_4;
-  IdentifyCase::Output_pub(cloud_cluster_4,msgs_cluster_4,pub_cluster_4);
-  sensor_msgs::PointCloud2 msgs_cluster_5;
-  IdentifyCase::Output_pub(cloud_cluster_5,msgs_cluster_5,pub_cluster_5);
-  sensor_msgs::PointCloud2 msgs_cluster_6;
-  IdentifyCase::Output_pub(cloud_cluster_6,msgs_cluster_6,pub_cluster_6);
-  sensor_msgs::PointCloud2 msgs_cluster_7;
-  IdentifyCase::Output_pub(cloud_cluster_7,msgs_cluster_7,pub_cluster_7);
-  //------------------------------------------------------------------------------
+  sensor_msgs::PointCloud2 msgs_cluster_all;
+  IdentifyCase::Output_pub(cloud_cluster_all,msgs_cluster_all,pub_cluster_all);
 
   sensor_msgs::PointCloud2 msgs_case_points;
   pcl::toROSMsg(*cloud_case_points, msgs_case_points);

@@ -10,7 +10,7 @@ from hsrb_task_apu_components import hsr_say
 if __name__ == '__main__':
     rospy.init_node('carry_medicine_case')
     rospy.sleep(2)
-    hs = hsr_say.HsrSay()
+    hs = hsr_say.HsrSay(u'薬を持ってきます')
 
     mtl = move_to_locations.MoveToLocations()
     for num in range(3):
@@ -18,6 +18,7 @@ if __name__ == '__main__':
         rospy.sleep(2)
         if not trans_origin == None:
             vc = vacuum.VacuumCase()
+            vc._look_medicine_calnedar()
             vc._vacuum()
             rospy.sleep(2)
 

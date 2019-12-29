@@ -5,14 +5,14 @@ medicine_calendar:
   child_frame_id: "medicine_calendar"
   transform:
     translation:
-      x: 0.482
-      y: 0.6
+      x: 0.50
+      y: 0.437
       z: 0.0
     rotation:
       x: 0.0
       y: 0.0
-      z: 0.715
-      w: 0.70
+      z: 0.692
+      w: 0.721
 
 ### living_room
 living_room:

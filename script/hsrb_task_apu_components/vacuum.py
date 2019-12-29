@@ -24,10 +24,8 @@ class VacuumCase(object):
 
     def _vacuum_call_back(self, data):
         self._suction_result = data.data
-        print data.data
 
-
-    def _vacuum(self):
+    def _look_medicine_calnedar(self):
         #look_medicine_calendar
         try:
             self._whole_body.move_to_neutral()
@@ -38,6 +36,7 @@ class VacuumCase(object):
         except Exception as e:
             rospy.loginfo("look_calendar Faild {0}".format(e))
 
+    def _vacuum(self):
         #vacuum
         rospy.sleep(3)
         listener = tf2_ros.TransformListener(self._tf2_buffer)
@@ -48,12 +47,12 @@ class VacuumCase(object):
                 try:
                     rospy.sleep(1)
                     self._whole_body.end_effector_frame = u'hand_l_finger_vacuum_frame'
-                    self._whole_body.move_end_effector_pose(geometry.pose(x=-0.015,z=-0.03,ek=-1.57),'suction_case_frame')
+                    self._whole_body.move_end_effector_pose(geometry.pose(x=-0.01,z=-0.03,ek=-1.57),'suction_case_frame')
                     rospy.sleep(1)
                     self._whole_body.impedance_config = 'compliance_middle'
                     self._whole_body.liner_weight=(100)
                     self._whole_body.liner_weight=(100)
-                    self._whole_body.move_end_effector_by_line((0,0,1),0.075)
+                    self._whole_body.move_end_effector_by_line((0,0,1),0.065)
                     self._whole_body.impedance_config = None
                     for num2 in range(15):
                         self._pub_vacumme.publish(True)

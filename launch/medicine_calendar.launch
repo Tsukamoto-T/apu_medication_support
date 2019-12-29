@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+  <!--<node pkg="rosbag" type="play" name="play" args="- -clock -l $(find medicine_calendar)/bag/identify_case.bag"/>-->
   <node name="identify_case" pkg="medicine_calendar" type="identify_case" output="screen">
     <param name="threshold_calendar" value="0.008"/> <!--値が小さいほど平面の条件が小さくなる-->
     <param name="calendar_number_neighbors" value="200"/>
@@ -14,8 +15,8 @@
     <param name="set_week" value="4"/>
     <param name="set_time" value="8"/>
   </node>
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/sample.rviz" required="true" output="screen" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/medicine_calendar.rviz" required="true" output="screen" />
   <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml" ns="medi_calendar" />
   <node pkg="tf2_ros" type="static_transform_publisher" name="medicine_calendar" args="/medi_calendar/medicine_calendar"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="living_room" args="/medi_calendar/living_room"/>
+  <!--<node pkg="medicine_calendar" name="move_medicine_calendar" type="move_medicine_calendar.py"/>-->
 </launch>
