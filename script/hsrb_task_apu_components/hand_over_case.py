@@ -27,6 +27,5 @@ class HandOverCase(object):
             self._whole_body.move_end_effector_pose(geometry.pose(),'hand_palm_link')
             for num2 in range(10):
                 self._pub_vacumme.publish(False)
-            self._tts.say(u'薬を持ってきました')
         except Exception as e:
             rospy.loginfo("hand_over_case Faild {0}".format(e))

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-
   <node name="identify_case" pkg="medicine_calendar" type="identify_case" output="screen">
     <param name="threshold_calendar" value="0.01"/> <!--値が小さいほど平面の条件が小さくなる-->
     <param name="calendar_number_neighbors" value="200"/>
@@ -12,11 +11,8 @@
     <param name="st_x" value="0.075"/>
     <param name="st_y" value="0.06"/>
     <param name="st_z" value="0.035"/>
-    <param name="set_week" value="1"/>
-    <param name="set_time" value="7"/>
+    <param name="set_week" value="0"/>
+    <param name="set_time" value="22"/>
   </node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/sample.rviz" required="true" output="screen" />
-  <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml" ns="medi_calendar" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="medicine_calendar" args="/medi_calendar/medicine_calendar"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="living" args="/medi_calendar/living"/>
 </launch>

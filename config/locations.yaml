@@ -18,7 +18,7 @@ medicine_calendar:
 living_room:
   header:
     frame_id: "map"
-  child_frame_id: "living_room"
+  child_frame_id: "living"
   transform:
     translation:
       x: -0.068

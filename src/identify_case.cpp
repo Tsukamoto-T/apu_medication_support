@@ -187,7 +187,6 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   pcl::SACSegmentation<PointT> seg;
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-  //pcl::PCDWriter writer; //?
   seg.setOptimizeCoefficients (true);
   seg.setModelType (pcl::SACMODEL_PLANE);
   seg.setMethodType (pcl::SAC_RANSAC);
@@ -276,13 +275,14 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     cloud_cluster->height = 1;
     cloud_cluster->is_dense = true;
     cc[j] = cloud_cluster->points.size();
-    std::cout << cc[j] << std::endl;
+    //std::cout << cc[j] << std::endl;
     *cloud_cluster_all = (*cloud_cluster_all) + (*cloud_cluster);
 
     //========クラスタごとの把持位置を求める==================================================
     IdentifyCase::Center_case(cloud_cluster,cloud_case_points);
     j++;
   }
+  std::cout << cloud_case_points->size() << std::endl;
 
   //===カレンダーの左上の座標を求める=====================================================
   double min_sum_point = 0.0;
@@ -320,39 +320,33 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     case 1:
     tm_point.y = st_point.y + st_y;
     week = "月曜日";
-    std::cout << week << std::endl;
     break;
     case 2:
     tm_point.y = st_point.y + st_y + interval_y;
     week = "火曜日";
-    std::cout << week << std::endl;
     break;
     case 3:
     tm_point.y = st_point.y + st_y + interval_y * 2;
     week = "水曜日";
-    std::cout << week << std::endl;
     break;
     case 4:
     tm_point.y = st_point.y + st_y + interval_y * 3;
     week = "木曜日";
-    std::cout << week << std::endl;
     break;
     case 5:
     tm_point.y = st_point.y + st_y + interval_y * 4;
     week = "金曜日";
-    std::cout << week << std::endl;
     break;
     case 6:
     tm_point.y = st_point.y + st_y + interval_y * 5;
     week = "土曜日";
-    std::cout << week << std::endl;
     break;
     case 0:
     tm_point.y = st_point.y + st_y + interval_y * 6;
     week = "日曜日";
-    std::cout << week << std::endl;
     break;
   }
+  //std::cout << week << std::endl;
 
   switch (set_time){
     case 4:
@@ -363,7 +357,6 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     case 9:
     tm_point.x = st_point.x + st_x;
     time = "あさ";
-    std::cout << time << std::endl;
     break;
 
     case 10:
@@ -374,7 +367,6 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     case 15:
     tm_point.x = st_point.x + st_x + interval_x;
     time = "ひる";
-    std::cout << time << std::endl;
     break;
 
     case 16:
@@ -385,7 +377,6 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     case 21:
     tm_point.x = st_point.x + st_x + interval_x * 2;
     time = "よる";
-    std::cout << time << std::endl;
     break;
 
     case 22:
@@ -396,9 +387,9 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     case 3:
     tm_point.x = st_point.x + st_x + interval_x * 3;
     time = "ねる前";
-    std::cout << time << std::endl;
     break;
   }
+  //std::cout << time << std::endl;
   tm_point.z = st_point.z - st_z;
   cloud_time_point->points.push_back(tm_point);
 

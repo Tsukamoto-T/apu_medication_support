@@ -36,11 +36,12 @@ class VacuumCase(object):
         except Exception as e:
             rospy.loginfo("look_calendar Faild {0}".format(e))
 
-    def _vacuum(self):
+    def _vacuum(self,senser_use):
         #vacuum
-        rospy.sleep(3)
+        rospy.sleep(2)
         listener = tf2_ros.TransformListener(self._tf2_buffer)
-        for num in range(5):
+        for num in range(2):
+            rospy.sleep(2)
             if (self._tf2_buffer.can_transform('map', 'suction_case_frame',rospy.Time.now(),rospy.Duration(20.0))):
                 self._tts.say(u'薬を見つけました')
                 self._find_case = True
@@ -52,12 +53,11 @@ class VacuumCase(object):
                     self._whole_body.impedance_config = 'compliance_middle'
                     self._whole_body.liner_weight=(100)
                     self._whole_body.liner_weight=(100)
-                    self._whole_body.move_end_effector_by_line((0,0,1),0.065)
+                    self._whole_body.move_end_effector_by_line((0,0,1),0.075)
                     self._whole_body.impedance_config = None
                     for num2 in range(15):
                         self._pub_vacumme.publish(True)
 
-                    print (u'ケースを吸引します')
                     rospy.sleep(2)
 
                     if (self._suction_result == True):
@@ -75,7 +75,7 @@ class VacuumCase(object):
                     self._result = 3
                     break
             else:
-                if not (num == 5):
+                if not (num == 1):
                     self._tts.say(u'薬を検出中です')
                 else:
                     self._tts.say(u'薬を見つけられませんでした')
@@ -83,9 +83,14 @@ class VacuumCase(object):
                     self._result = 0
 
         rospy.sleep(2)
-        if not(self._result == 1):
-            for num in range(10):
-                self._pub_vacumme.publish(False)
+        if(senser_use == True):
+            if not(self._result == 1):
+                for num in range(10):
+                    self._pub_vacumme.publish(False)
+        else:
+            if not(self._result == 1 and self._result == 2):
+                for num in range(10):
+                    self._pub_vacumme.publish(False)
 
         if (self._find_case == True):
             #return_posture
