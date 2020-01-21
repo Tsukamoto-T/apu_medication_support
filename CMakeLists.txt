@@ -21,3 +21,6 @@ include_directories(${catkin_INCLUDE_DIRS})
 
 add_executable(identify_case src/identify_case.cpp)
 target_link_libraries(identify_case ${catkin_LIBRARIES})
+
+add_executable(case_disturbance src/case_disturbance.cpp)
+target_link_libraries(case_disturbance ${catkin_LIBRARIES})

@@ -8,6 +8,7 @@ import sys
 import tf2_ros
 import geometry_msgs.msg
 from std_msgs.msg import Bool
+from std_msgs.msg import Float64
 
 class VacuumCase(object):
     def __init__(self):
@@ -18,12 +19,17 @@ class VacuumCase(object):
         self._tf2_buffer = self._robot._get_tf2_buffer()
         self._pub_vacumme = rospy.Publisher('/hsrb/command_suction', Bool, queue_size = 1)
         rospy.Subscriber('/hsrb/pressure_sensor', Bool, self._vacuum_call_back)
+        rospy.Subscriber('/identify_case/point_dist', Float64, self._dist_call_back)
         self._find_case = False
         self._result = 0
         self._suction_result = False
+        self._dist = 0.0
 
     def _vacuum_call_back(self, data):
         self._suction_result = data.data
+
+    def _dist_call_back(self, data):
+        self._dist = data.data
 
     def _look_medicine_calnedar(self):
         #look_medicine_calendar
@@ -53,20 +59,25 @@ class VacuumCase(object):
                     self._whole_body.impedance_config = 'compliance_middle'
                     self._whole_body.liner_weight=(100)
                     self._whole_body.liner_weight=(100)
-                    self._whole_body.move_end_effector_by_line((0,0,1),0.075)
+                    self._whole_body.move_end_effector_by_line((0,0,1),self._dist + 0.015)
                     self._whole_body.impedance_config = None
                     for num2 in range(15):
                         self._pub_vacumme.publish(True)
-
                     rospy.sleep(2)
 
-                    if (self._suction_result == True):
-                        rospy.loginfo('Suction succeeded')
-                        self._result = 1
-                        break
-                    else:
-                        rospy.loginfo('Suction failed')
-                        self._result = 2
+                    for num in range(3):
+                        rospy.sleep(1)
+                        if (self._suction_result == True):
+                            rospy.loginfo('Suction succeeded')
+                            self._result = 1
+                            break
+                        else:
+                            self._whole_body.move_end_effector_by_line((0,0,1),0.01)
+                        if num == 3:
+                            rospy.loginfo('Suction failed')
+                            self._result = 2
+                            break
+                    if self._result == 1:
                         break
 
                 except Exception as e:

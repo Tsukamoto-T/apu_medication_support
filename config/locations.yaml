@@ -15,7 +15,7 @@ medicine_calendar:
       w: 0.721
 
 ### living_room
-living_room:
+living:
   header:
     frame_id: "map"
   child_frame_id: "living"
