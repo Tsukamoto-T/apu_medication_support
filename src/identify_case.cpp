@@ -231,7 +231,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   sor_plane.setStddevMulThresh(1.0);
   sor_plane.filter(*cloud_rest_removal);
 
-  //======カレンダー意外の点群を除去==================================================
+  //======カレンダー以外の点群を除去==================================================
   //------クラスタリング-------------------------------------------------------------
   pcl::search::KdTree<PointT>::Ptr cluster_tree (new pcl::search::KdTree<PointT>);
   cluster_tree->setInputCloud(cloud_rest_removal);
@@ -559,16 +559,13 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
 
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_calendar;
-  pcl::toROSMsg(*cloud_calendar, msgs_calendar);
-  pub_calendar.publish(msgs_calendar);
+  IdentifyCase::Output_pub(cloud_calendar,msgs_calendar,pub_calendar);
 
   sensor_msgs::PointCloud2 msgs_case;
-  pcl::toROSMsg(*cloud_case, msgs_case);
-  pub_case.publish(msgs_case);
+  IdentifyCase::Output_pub(cloud_case,msgs_case,pub_case);
 
   sensor_msgs::PointCloud2 msgs_case_removal;
-  pcl::toROSMsg(*cloud_case_removal, msgs_case_removal);
-  pub_case_removal.publish(msgs_case_removal);
+  IdentifyCase::Output_pub(cloud_case_removal,msgs_case_removal,pub_case_removal);
 
   sensor_msgs::PointCloud2 msgs_cluster_all;
   IdentifyCase::Output_pub(cloud_cluster_all,msgs_cluster_all,pub_cluster_all);
