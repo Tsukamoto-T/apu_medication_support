@@ -51,7 +51,6 @@ class MoveToLocations(object):
                         rospy.logwarn("timeout")
                         break
                 if self._omni_base.is_succeeded():
-                    self._tts.say(u'移動しました')
                     return trans_origin
             except Exception as e:
                 rospy.loginfo("move Faild :{}".format(e))
