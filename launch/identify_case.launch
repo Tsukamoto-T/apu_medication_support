@@ -20,5 +20,5 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find medicine_calendar)/rviz/sample.rviz" required="true" output="screen" />
   <rosparam command="load" file="$(find medicine_calendar)/config/locations.yaml" ns="medi_calendar" />
   <node pkg="tf2_ros" type="static_transform_publisher" name="medicine_calendar" args="/medi_calendar/medicine_calendar"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="living" args="/medi_calendar/living"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="table_side" args="/medi_calendar/table_side"/>
 </launch>

@@ -35,16 +35,14 @@ class VacuumCase(object):
         #look_medicine_calendar
         try:
             self._whole_body.move_to_neutral()
-            self._whole_body.move_to_joint_positions({'arm_lift_joint': 0.25})
             self._omni_base.go_rel(0.0,0.0,math.radians(60),200.0)
-            self._whole_body.move_to_joint_positions({'head_tilt_joint': 0.0})
-            self._whole_body.move_to_joint_positions({'head_pan_joint': math.radians(-58)})
+            self._whole_body.move_to_joint_positions({'arm_lift_joint': 0.25,'head_tilt_joint': 0.0,'head_pan_joint':math.radians(-58)})
         except Exception as e:
             rospy.loginfo("look_calendar Faild {0}".format(e))
 
     def _vacuum(self,senser_use):
         #vacuum
-        rospy.sleep(2)
+        rospy.sleep(1)
         listener = tf2_ros.TransformListener(self._tf2_buffer)
         for num in range(2):
             rospy.sleep(2)
@@ -52,7 +50,6 @@ class VacuumCase(object):
                 self._tts.say(u'薬を見つけました')
                 self._find_case = True
                 try:
-                    rospy.sleep(1)
                     self._whole_body.end_effector_frame = u'hand_l_finger_vacuum_frame'
                     self._whole_body.move_end_effector_pose(geometry.pose(x=-0.01,z=-0.03,ek=-1.57),'suction_case_frame')
                     rospy.sleep(1)
@@ -65,28 +62,29 @@ class VacuumCase(object):
                         self._pub_vacumme.publish(True)
                     rospy.sleep(2)
 
-                    for num in range(3):
-                        rospy.sleep(1)
+                    for num in range(2):
+                        rospy.sleep(2)
                         if (self._suction_result == True):
                             rospy.loginfo('Suction succeeded')
                             self._result = 1
                             break
                         else:
+                            if num == 1:
+                                rospy.loginfo('Suction failed')
+                                self._result = 2
+                                break
                             self._whole_body.move_end_effector_by_line((0,0,1),0.01)
-                        if num == 3:
-                            rospy.loginfo('Suction failed')
-                            self._result = 2
-                            break
+
                     if self._result == 1:
                         break
 
                 except Exception as e:
                     rospy.loginfo("vacuum Faild {0}".format(e))
                     self._find_case = False
-                    self._result = 3
-                    break
+                    self._result = 2
+                    #break
             else:
-                if not (num == 1):
+                if not (num == 2):
                     self._tts.say(u'薬を検出中です')
                 else:
                     self._tts.say(u'薬を見つけられませんでした')
@@ -107,7 +105,7 @@ class VacuumCase(object):
             #return_posture
             self._whole_body.impedance_config = 'compliance_middle'
             self._whole_body.move_end_effector_by_line((1,0,0),0.04)
-            self._whole_body.move_end_effector_by_line((0,0,1),-0.1)
+            self._whole_body.move_end_effector_by_line((0,0,1),-0.2)
             self._whole_body.impedance_config = None
             self._whole_body.move_to_neutral()
             self._whole_body.end_effector_frame = u'hand_palm_link'

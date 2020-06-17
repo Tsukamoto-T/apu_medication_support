@@ -28,6 +28,7 @@
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/filters/conditional_removal.h>
+#include <pcl/filters/passthrough.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/search/kdtree.h>
 #include <pcl/registration/icp.h>
@@ -62,6 +63,8 @@ private:
   ros::Publisher pub_calendar;
   ros::Publisher pub_case;;
   ros::Publisher pub_case_removal;
+  ros::Publisher pub_case_filtered;
+  //ros::Publisher pub_case_unfiltered;
 
   ros::Publisher pub_cluster_all;
   ros::Publisher pub_case_points;
@@ -89,6 +92,7 @@ public:
   double st_z = 0.045;
   int set_week = 1;
   int set_time = 7;
+  pcl::PointXYZ calendar_cent;
 
   IdentifyCase();
   void Output_pub(pcl::PointCloud<PointT>::Ptr cloud_ ,sensor_msgs::PointCloud2 msgs_,ros::Publisher pub_);
@@ -129,6 +133,8 @@ IdentifyCase::IdentifyCase(){
   pub_calendar = nh.advertise<sensor_msgs::PointCloud2>("cloud_calendar", 1);
   pub_case = nh.advertise<sensor_msgs::PointCloud2>("cloud_case", 1);
   pub_case_removal = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_removal", 1);
+  pub_case_filtered = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_filtered", 1);
+  //pub_case_unfiltered = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_unfiltered", 1);
 
   pub_cluster_all = nh.advertise<sensor_msgs::PointCloud2>("cloud_cluster_all", 1);
   pub_case_points = nh.advertise<sensor_msgs::PointCloud2>("cloud_case_points", 1);
@@ -170,22 +176,25 @@ void IdentifyCase::Center_case(pcl::PointCloud<PointT>::Ptr cloud_cluster_,pcl::
   }
   cent_x /= cent_i;
 
-  double dist = 0.0;
-  double dist_min = 100.0;
-  int center_point = 0;
-  for(size_t i = 0; i < cloud_cluster_->size(); i++){
-    dist = sqrt(pow((cent_x - cloud_cluster_->points[i].x),2.0) + (pow((cent_y - cloud_cluster_->points[i].y),2.0)));
-    if (dist_min > dist){
-      dist_min = dist;
-      center_point = (int)i;
+  //-----カレンダーの紐をクラスタと認識させない---
+  if((0.185>fabs(calendar_cent.x - cent_x))&&(0.258>fabs(calendar_cent.y - cent_y))){
+    double dist = 0.0;
+    double dist_min = 100.0;
+    int center_point = 0;
+    for(size_t i = 0; i < cloud_cluster_->size(); i++){
+      dist = sqrt(pow((cent_x - cloud_cluster_->points[i].x),2.0) + (pow((cent_y - cloud_cluster_->points[i].y),2.0)));
+      if (dist_min > dist){
+        dist_min = dist;
+        center_point = (int)i;
+      }
     }
-  }
-  if(0 < cloud_cluster_->size()){
-    pcl::PointXYZ cent_;
-    cent_.x = cloud_cluster_->points[center_point].x;
-    cent_.y = cloud_cluster_->points[center_point].y;
-    cent_.z = cloud_cluster_->points[center_point].z;
-    cloud_case_points->points.push_back(cent_);
+    if(0 < cloud_cluster_->size()){
+      pcl::PointXYZ cent_;
+      cent_.x = cloud_cluster_->points[center_point].x;
+      cent_.y = cloud_cluster_->points[center_point].y;
+      cent_.z = cloud_cluster_->points[center_point].z;
+      cloud_case_points->points.push_back(cent_);
+    }
   }
 }
 
@@ -279,6 +288,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
       double cluster_dist;
       cluster_dist = sqrt(pow(cluster_cent.x ,2) + pow(cluster_cent.y,2));
       if (min_cluster_point > cluster_dist){
+        calendar_cent = cluster_cent;
         min_cluster_point = cluster_dist;
         *cloud_cluster_calendar = *cloud_cluster;
       }
@@ -311,8 +321,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   msgs_cluster_points.header.frame_id = "head_rgbd_sensor_rgb_frame";
   pub_cluster_points.publish(msgs_cluster_points);
 
-  std::cout << "薬カレンダーサイズ" << std::endl;
-  std::cout << cloud_cluster_calendar->size() << std::endl;
+  //std::cout << "薬カレンダーサイズ：" << cloud_cluster_calendar->size() << std::endl;
   if (cloud_cluster_calendar->size() <= 0){
     std::cout << "薬カレンダーを見つけられませんでした" << std::endl;
     return;
@@ -349,16 +358,48 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   sor_plane_2.setStddevMulThresh(1.0);
   sor_plane_2.filter(*cloud_case_removal);
 
+  //====カレンダー平面より奥にある点を削除================
+  /*
+  pcl::PointIndices::Ptr inliers_3 (new pcl::PointIndices);
+  std::cout << *inliers_3 << std::endl;
+  double sensor_dist = 0.0;
+  int l = 0;
+  for(size_t i = 0; i < cloud_case_removal->size(); i++){
+    sensor_dist = coefficients_2->values[0]*cloud_case_removal->points[i].x + coefficients_2->values[1]*cloud_case_removal->points[i].y +coefficients_2->values[2]*cloud_case_removal->points[i].z + coefficients_2->values[3] / sqrt(pow(coefficients_2->values[0],2) + pow(coefficients_2->values[1],2) + pow(coefficients_2->values[2],2));
+    if (sensor_dist < 0){
+      //inliers_3->indices[l] = i;
+      l++;
+    }
+  }
+  pcl::PointCloud<PointT>::Ptr cloud_case_filtered(new pcl::PointCloud<PointT>);
+  pcl::PointCloud<PointT>::Ptr cloud_case_unfiltered(new pcl::PointCloud<PointT>);
+  pcl::ExtractIndices<PointT> extract_3;
+  extract_3.setInputCloud (cloud_case_removal);
+  extract_3.setIndices (inliers_3);
+  extract_3.setNegative (false);
+  extract_3.filter (*cloud_case_filtered);
+  extract_3.setNegative (true);
+  extract_3.filter (*cloud_case_unfiltered);
+  */
+
+  pcl::PointCloud<PointT>::Ptr cloud_case_filtered(new pcl::PointCloud<PointT>);
+  pcl::PassThrough<PointT> pass_z;
+  pass_z.setInputCloud(cloud_case_removal);
+  pass_z.setFilterFieldName("z");
+  pass_z.setFilterLimits(0.0,calendar_cent.z);
+  pass_z.filter(*cloud_case_filtered);
+
+
   //================クラスタリング====================================================
   pcl::search::KdTree<PointT>::Ptr case_cluster_tree (new pcl::search::KdTree<PointT>);
-  case_cluster_tree->setInputCloud(cloud_case_removal);
+  case_cluster_tree->setInputCloud(cloud_case_filtered);
   std::vector<pcl::PointIndices> case_cluster_indices;
   pcl::EuclideanClusterExtraction<PointT> ec;
   ec.setClusterTolerance (case_cluster_tolerance);//探索する半径の設定
   ec.setMinClusterSize (min_case_cluster_size);//最小点の数を設定
   ec.setMaxClusterSize (max_case_cluster_size);//最大の点の数を設定
   ec.setSearchMethod (case_cluster_tree);//検索先のポインタを指定
-  ec.setInputCloud (cloud_case_removal);//点群を入力
+  ec.setInputCloud (cloud_case_filtered);//点群を入力
   ec.extract (case_cluster_indices);//クラスター情報を出力
 
   int k = 0;
@@ -369,7 +410,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   for (std::vector<pcl::PointIndices>::const_iterator it = case_cluster_indices.begin();it != case_cluster_indices.end(); ++it){
     pcl::PointCloud<PointT>::Ptr cloud_case_cluster (new pcl::PointCloud<PointT>);
     for(std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); pit++){
-      cloud_case_cluster->points.push_back(cloud_case_removal->points[*pit]);
+      cloud_case_cluster->points.push_back(cloud_case_filtered->points[*pit]);
     }
 
     cloud_case_cluster->width = cloud_case_cluster->points.size();
@@ -382,7 +423,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     IdentifyCase::Center_case(cloud_case_cluster,cloud_case_points);
     k++;
   }
-  std::cout << cloud_case_points->size() << std::endl;
+  std::cout << "薬ケースクラスタ数：" << cloud_case_points->size() << std::endl;
 
   //===カレンダーの左上の座標を求める=====================================================
   double min_sum_point = 0.0;
@@ -518,7 +559,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     //------壁から把持位置までの距離を計算---------------------------------------------
     double point_dist = 0.0;
     point_dist = fabs(coefficients->values[0]*suction_point.x + coefficients->values[1]*suction_point.y +coefficients->values[2]*suction_point.z + coefficients->values[3]) / sqrt(pow(coefficients->values[0],2) + pow(coefficients->values[1],2) + pow(coefficients->values[2],2));
-    std::cout << point_dist <<std::endl;
+    //std::cout << point_dist <<std::endl;
     std_msgs::Float64 msgs_dist;
     msgs_dist.data = point_dist;
     pub_dist.publish(msgs_dist);
@@ -554,7 +595,7 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
     msgs_suction_point.header.frame_id = "head_rgbd_sensor_rgb_frame";
     pub_suction_point.publish(msgs_suction_point);
   }else{
-    std::cout << week << time << "の薬はありません" << std::endl;
+    //std::cout << week << time << "の薬はありません" << std::endl;
   }
 
   //==========出力==================================================================
@@ -566,6 +607,14 @@ void IdentifyCase::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
 
   sensor_msgs::PointCloud2 msgs_case_removal;
   IdentifyCase::Output_pub(cloud_case_removal,msgs_case_removal,pub_case_removal);
+
+  sensor_msgs::PointCloud2 msgs_case_filtered;
+  IdentifyCase::Output_pub(cloud_case_filtered,msgs_case_filtered,pub_case_filtered);
+
+  /*
+  sensor_msgs::PointCloud2 msgs_case_unfiltered;
+  IdentifyCase::Output_pub(cloud_case_unfiltered,msgs_case_unfiltered,pub_case_unfiltered);
+  */
 
   sensor_msgs::PointCloud2 msgs_cluster_all;
   IdentifyCase::Output_pub(cloud_cluster_all,msgs_cluster_all,pub_cluster_all);

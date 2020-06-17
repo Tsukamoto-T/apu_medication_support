@@ -11,7 +11,7 @@ import geometry_msgs.msg
 class HsrSay(object):
     def __init__(self):
         self._robot = hsrb_interface.Robot()
-        self._tts = self._robot.try_get('default_tts')
+        self._tts = self._robot.get('default_tts')
 
     def _say(self, _word):
         self._tts.say(_word)

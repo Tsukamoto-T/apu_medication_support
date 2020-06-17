@@ -21,7 +21,8 @@ class HandOverCase(object):
         try:
             self._whole_body.move_to_neutral()
             self._whole_body.looking_hand_constraintraint = True
-            self._whole_body.move_to_joint_positions({'arm_flex_joint':-0.7,'wrist_flex_joint':-0.9})
+            #self._whole_body.move_to_joint_positions({'arm_flex_joint':-0.7,'wrist_flex_joint':-0.9})
+            self._whole_body.move_to_joint_positions({'arm_flex_joint':-0.7,'wrist_flex_joint':-0.9,'arm_lift_joint': 0.25})
             self._whole_body.end_effector_frame = u'hand_l_finger_vacuum_frame'
             self._whole_body.angular_weight=(100)
             self._whole_body.move_end_effector_pose(geometry.pose(),'hand_palm_link')

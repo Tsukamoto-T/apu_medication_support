@@ -10,6 +10,7 @@ Panels:
         - /PointCloud21
         - /PointCloud22
         - /PointCloud23
+        - /PointCloud24
       Splitter Ratio: 0.642651021
     Tree Height: 1514
   - Class: rviz/Selection
@@ -58,254 +59,37 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /dynamic_obstacle_map
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Map
       Topic: /static_obstacle_map_ref
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        arm_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        arm_lift_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        arm_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_b_bumper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_f_bumper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_imu_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_drive_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_l_passive_wheel_x_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_passive_wheel_y_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_l_passive_wheel_z_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_r_drive_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_r_passive_wheel_x_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_r_passive_wheel_y_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_r_passive_wheel_z_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_range_sensor_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        base_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_camera_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_l_finger_tip_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_finger_vacuum_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_l_mimic_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_l_spring_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_motor_dummy_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_palm_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_r_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        hand_r_finger_tip_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_mimic_distal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        hand_r_spring_proximal_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_center_camera_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_center_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_l_stereo_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_l_stereo_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_pan_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_r_stereo_camera_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_r_stereo_camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_rgbd_sensor_gazebo_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        head_rgbd_sensor_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        head_tilt_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        torso_lift_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        wrist_ft_sensor_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        wrist_ft_sensor_mount_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        wrist_roll_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -322,9 +106,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 3694
+      Max Intensity: 3838
       Min Color: 0; 0; 0
-      Min Intensity: 473
+      Min Intensity: 429
       Name: RangeSensor
       Position Transformer: XYZ
       Queue Size: 10
@@ -423,256 +207,19 @@ Visualization Manager:
       Unreliable: false
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        arm_flex_link:
-          Value: false
-        arm_lift_link:
-          Value: false
-        arm_roll_link:
-          Value: false
-        base_b_bumper_link:
-          Value: false
-        base_f_bumper_link:
-          Value: false
-        base_footprint:
-          Value: false
-        base_footprint_wheel:
-          Value: false
-        base_imu_frame:
-          Value: false
-        base_l_drive_wheel_link:
-          Value: false
-        base_l_passive_wheel_x_frame:
-          Value: false
-        base_l_passive_wheel_y_frame:
-          Value: false
-        base_l_passive_wheel_z_link:
-          Value: false
-        base_link:
-          Value: true
-        base_r_drive_wheel_link:
-          Value: false
-        base_r_passive_wheel_x_frame:
-          Value: false
-        base_r_passive_wheel_y_frame:
-          Value: false
-        base_r_passive_wheel_z_link:
-          Value: false
-        base_range_sensor_link:
-          Value: false
-        base_roll_link:
-          Value: false
-        bathroom:
-          Value: true
-        bedroom:
-          Value: true
-        blind:
-          Value: true
-        bottle_trash_box:
-          Value: true
-        charger_station:
-          Value: true
-        corridor:
-          Value: true
-        dyning:
-          Value: true
-        entrance:
-          Value: true
-        hand_camera_frame:
-          Value: false
-        hand_camera_gazebo_frame:
-          Value: false
-        hand_l_distal_link:
-          Value: false
-        hand_l_finger_tip_frame:
-          Value: false
-        hand_l_finger_vacuum_frame:
-          Value: false
-        hand_l_mimic_distal_link:
-          Value: false
-        hand_l_proximal_link:
-          Value: false
-        hand_l_spring_proximal_link:
-          Value: false
-        hand_motor_dummy_link:
-          Value: false
-        hand_palm_link:
-          Value: false
-        hand_r_distal_link:
-          Value: false
-        hand_r_finger_tip_frame:
-          Value: false
-        hand_r_mimic_distal_link:
-          Value: false
-        hand_r_proximal_link:
-          Value: false
-        hand_r_spring_proximal_link:
-          Value: false
-        hanger:
-          Value: true
-        head_center_camera_frame:
-          Value: false
-        head_center_camera_gazebo_frame:
-          Value: false
-        head_l_stereo_camera_frame:
-          Value: false
-        head_l_stereo_camera_gazebo_frame:
-          Value: false
-        head_l_stereo_camera_link:
-          Value: false
-        head_pan_link:
-          Value: false
-        head_r_stereo_camera_gazebo_frame:
-          Value: false
-        head_r_stereo_camera_link:
-          Value: false
-        head_rgbd_sensor_gazebo_frame:
-          Value: false
-        head_rgbd_sensor_link:
-          Value: false
-        head_rgbd_sensor_rgb_frame:
-          Value: false
-        head_tilt_link:
-          Value: false
-        kitchen:
-          Value: true
-        living:
-          Value: true
-        map:
-          Value: true
-        medicine_calendar:
-          Value: true
-        odom:
-          Value: false
-        sofa:
-          Value: true
-        suction_case_frame:
-          Value: true
-        table_side:
-          Value: true
-        torso_lift_link:
-          Value: false
-        tv:
-          Value: true
-        wrist_flex_link:
-          Value: false
-        wrist_ft_sensor_frame:
-          Value: false
-        wrist_ft_sensor_mount_link:
-          Value: false
-        wrist_roll_link:
-          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          bathroom:
-            {}
-          bedroom:
-            {}
-          blind:
-            {}
-          bottle_trash_box:
-            {}
-          charger_station:
-            {}
-          corridor:
-            hanger:
-              {}
-          dyning:
-            table_side:
-              {}
-          entrance:
-            {}
-          kitchen:
-            {}
-          living:
-            sofa:
-              {}
-          medicine_calendar:
-            {}
-          odom:
-            base_footprint:
-              base_link:
-                arm_lift_link:
-                  arm_flex_link:
-                    arm_roll_link:
-                      wrist_flex_link:
-                        wrist_ft_sensor_mount_link:
-                          wrist_ft_sensor_frame:
-                            wrist_roll_link:
-                              hand_palm_link:
-                                hand_camera_frame:
-                                  hand_camera_gazebo_frame:
-                                    {}
-                                hand_l_proximal_link:
-                                  hand_l_spring_proximal_link:
-                                    hand_l_mimic_distal_link:
-                                      hand_l_distal_link:
-                                        hand_l_finger_tip_frame:
-                                          {}
-                                        hand_l_finger_vacuum_frame:
-                                          {}
-                                hand_motor_dummy_link:
-                                  {}
-                                hand_r_proximal_link:
-                                  hand_r_spring_proximal_link:
-                                    hand_r_mimic_distal_link:
-                                      hand_r_distal_link:
-                                        hand_r_finger_tip_frame:
-                                          {}
-                base_b_bumper_link:
-                  {}
-                base_f_bumper_link:
-                  {}
-                base_imu_frame:
-                  {}
-                base_range_sensor_link:
-                  {}
-                base_roll_link:
-                  base_l_drive_wheel_link:
-                    {}
-                  base_l_passive_wheel_x_frame:
-                    base_l_passive_wheel_y_frame:
-                      base_l_passive_wheel_z_link:
-                        {}
-                  base_r_drive_wheel_link:
-                    {}
-                  base_r_passive_wheel_x_frame:
-                    base_r_passive_wheel_y_frame:
-                      base_r_passive_wheel_z_link:
-                        {}
-                torso_lift_link:
-                  head_pan_link:
-                    head_tilt_link:
-                      head_center_camera_frame:
-                        head_center_camera_gazebo_frame:
-                          {}
-                      head_l_stereo_camera_link:
-                        head_l_stereo_camera_frame:
-                          head_rgbd_sensor_rgb_frame:
-                            suction_case_frame:
-                              {}
-                        head_l_stereo_camera_gazebo_frame:
-                          {}
-                      head_r_stereo_camera_link:
-                        head_r_stereo_camera_gazebo_frame:
-                          {}
-                      head_rgbd_sensor_link:
-                        head_rgbd_sensor_gazebo_frame:
-                          {}
-            base_footprint_wheel:
-              {}
-          tv:
-            {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -682,7 +229,7 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
-      Color: 255; 255; 255
+      Color: 255; 0; 0
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -693,12 +240,12 @@ Visualization Manager:
       Min Intensity: 0
       Name: PointCloud2
       Position Transformer: XYZ
-      Queue Size: 3
+      Queue Size: 10
       Selectable: true
-      Size (Pixels): 3
+      Size (Pixels): 10
       Size (m): 0.00999999978
       Style: Points
-      Topic: /identify_case/cloud_rest
+      Topic: /identify_case/cloud_case_points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -712,7 +259,7 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
-      Color: 0; 255; 255
+      Color: 255; 255; 255
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -742,7 +289,7 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
-      Color: 255; 255; 255
+      Color: 0; 255; 255
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -758,7 +305,37 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00999999978
       Style: Points
-      Topic: /identify_case/cloud_cluster_all
+      Topic: /identify_case/cloud_case_filtered
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 0; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 10
+      Size (m): 0.00999999978
+      Style: Points
+      Topic: /identify_case/cloud_time_point
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -788,25 +365,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.616356015
+      Distance: 0.777763665
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0145815443
-        Y: 0.523493111
-        Z: 1.13475633
+        X: -0.692551315
+        Y: 0.263159096
+        Z: 1.06377852
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.00979497191
+      Pitch: 0.194797099
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.266775727
+      Yaw: 0.311293662
     Saved: ~
 Window Geometry:
   Displays:

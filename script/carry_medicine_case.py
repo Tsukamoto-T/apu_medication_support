@@ -11,6 +11,7 @@ if __name__ == '__main__':
     rospy.init_node('carry_medicine_case')
     rospy.sleep(2)
     hs = hsr_say.HsrSay()
+    rospy.sleep(2)
     hs._say(u'薬を持ってきます')
 
     mtl = move_to_locations.MoveToLocations()
@@ -23,13 +24,13 @@ if __name__ == '__main__':
             vc._vacuum(True)
             rospy.sleep(2)
             if (vc._result == 0):
-                trans_ = mtl._move('living')
+                trans_ = mtl._move('test_position')
                 rospy.sleep(2)
                 hs._say(u'今、のむ薬はありません')
                 break
 
             elif (vc._result == 1):
-                trans_ = mtl._move('living')
+                trans_ = mtl._move('test_position')
                 rospy.sleep(2)
                 hoc = hand_over_case.HandOverCase()
                 hoc._hand_over()
