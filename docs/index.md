@@ -35,9 +35,8 @@
  - トヨタもシステムダウンを想定してHSRを設計している。
 - 画像や点群を高速に遣り取りすることも難しい。
 
-## ROS and others
+## ROS and others  
 
-　
 ---|
 Player|
 YARP|
@@ -45,3 +44,56 @@ Orocos|
 CARMEN|
 Orca|
 Microsoft Robotics Studio|
+
+
+#ROSの環境構築
+## Ubuntuの用意
+- ROSの演習を行うため、Ubuntu 18.04（Bionic Beaver）が使用できるコンピューターを1人1台用意する。
+- 可能であれば、VirtualBoxなどの仮想環境でなく、ネイティブ環境にインストールする。（＝マルチブート環境を構築する。）
+- 難しい場合は仮想環境にインストールする。本演習はVirtualBoxでも動作しますが、研究レベルのシミュレーションは動作しません。
+
+## ROSの環境構築
+Ubuntu 18.04に対応したROS（Melodic Morenia）をインストールする。  
+[ROS.org](http://wiki.ros.org/ROS/Installation)を参考にする。  
+ターミナルに下記のコマンドを一行ずつ入力し、実行する。  
+```
+$ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+$ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+$ sudo apt update
+$ sudo apt install ros-melodic-desktop-full
+$ sudo rosdep init
+$ rosdep update
+$ echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+$ source ~/.bashrc
+$ sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential
+```  
+正しくインストールできたかどうかをターミナルで確認する。  
+```
+$ printenv | grep ROS
+↓正常にインストールできていれば、下記のように出力される。
+ROS_ETC_DIR=/opt/ros/melodic/etc/ros
+ROS_ROOT=/opt/ros/melodic/share/ros
+ROS_MASTER_URI=http://localhost:11311
+ROS_VERSION=1
+ROS_PYTHON_VERSION=2
+ROS_PACKAGE_PATH=/opt/ros/melodic/share
+ROSLISP_PACKAGE_DIRECTORIES=
+ROS_DISTRO=melodic
+```  
+試しにビルドする。  
+```
+$ mkdir -p ~/catkin_ws/src
+$ cd ~/catkin_ws
+$ catkin_make
+$ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+$ source ~/.bashrc
+$ roscd
+↓正常にビルドできていれば、下記の場所に移動する。
+~/catkin_ws/devel
+```  
+試しに演習に必要となるROSパッケージをインストールする。  
+```
+$ sudo apt install ros-melodic-usb-cam
+$ sudo apt install ros-melodic-cv-camera
+$ sudo apt install ros-melodic-opencv-apps
+```
