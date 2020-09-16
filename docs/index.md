@@ -37,8 +37,9 @@
 
 ## ROS and others
 
-Player|
+　｜
 ---|
+Player|
 YARP|
 Orocos|
 CARMEN|
