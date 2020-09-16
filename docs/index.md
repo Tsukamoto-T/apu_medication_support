@@ -48,6 +48,7 @@ Orca|
 Microsoft Robotics Studio|
 
 
+
 # ROSの環境構築
 ## Ubuntuの用意
 - ROSの演習を行うため、Ubuntu 18.04（Bionic Beaver）が使用できるコンピューターを1人1台用意する。
