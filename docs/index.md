@@ -37,8 +37,7 @@
 
 ## ROS and others
 
-
- 
+x|
 ---|
 Player|
 YARP|
@@ -46,7 +45,6 @@ Orocos|
 CARMEN|
 Orca|
 Microsoft Robotics Studio|
-
 
 
 # ROSの環境構築
