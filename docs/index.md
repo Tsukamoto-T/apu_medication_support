@@ -133,6 +133,7 @@ $ rosrun rqt_graph rqt_graph（※正式な方法）
 $ rqt_graph（※簡便な方法）
 ```  
 名前が「/teleop_turtle」というturtle_teleop_keyタイプのノードと、名前が「/turtlesim」というturtlesim_nodeタイプのノードが、ROSトピック「/turtle1/cmd_vel」で繋がっていることが確認できると思います。このトピックが速度情報を伝達するため、キーボードで亀を動かすことができます。  
+
 閉じるボタンか「Ctrlキー」＋「cキー」でrqt_graphを停止します。
 
 #### rostopic  
@@ -151,6 +152,7 @@ $ rostopic echo /turtle1/cmd_vel
 $ rostopic type /turtle1/cmd_vel
 ```
 「geometry_msgs/Twist」という型であることが分かります。もちろんintなどの単純な型（std_msgs/Int32）も存在しますが、ROSはロボット用のソフトウェアなので、いくつかの変数がまとまった構造体のような型を利用することが多いです。  
+
 下記のコマンドで調べると、メッセージ型「geometry_msgs/Twist」は２つの３次元ベクトル（linearとangular）で構成されており、それぞれの値はfloatであることが分かります。  
 ```
 $ rosmsg show geometry_msgs/Twist
