@@ -37,10 +37,6 @@
 
 ## ROS and others
 
-|:---|
-
-
-| TH1 |
-----
-|Player|
-|YARP|
+x|
+---
+Player
