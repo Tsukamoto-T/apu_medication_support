@@ -36,7 +36,7 @@
 - 画像や点群を高速に遣り取りすることも難しい。
 
 ## ROS and others  
-
+ 
 ---|
 Player|
 YARP|
@@ -46,7 +46,7 @@ Orca|
 Microsoft Robotics Studio|
 
 
-#ROSの環境構築
+# ROSの環境構築
 ## Ubuntuの用意
 - ROSの演習を行うため、Ubuntu 18.04（Bionic Beaver）が使用できるコンピューターを1人1台用意する。
 - 可能であれば、VirtualBoxなどの仮想環境でなく、ネイティブ環境にインストールする。（＝マルチブート環境を構築する。）
