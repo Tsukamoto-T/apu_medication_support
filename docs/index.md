@@ -278,5 +278,24 @@ ROSパッケージ「opencv_apps」は画像処理用ライブラリーである
 
 camera_infoの情報を利用することになるので、カメラのキャリブレーションを行う。→Camera Calibration
 
-試しに実行する。5つのROSノードが起動する。
+試しに実行する。5つのROSノードが起動する。  
+```
+roslaunch stl_ros_sample turtle_operation.launch
+```  
+ROSパッケージ「opencv_apps」のROSノード「hough_circles（ハフ変換）」を利用して真円を検出する。そして、鈴木のROSパッケージ「stl_ros_sample」のROSノード「turtle_operation」で、真円の中心位置を亀の操作量へ変換する。
+
+何か円形のものを撮影し、円を検出させる。画像の上の方に円を検出させると前進、下の方に検出させると後進する。また、左の方に円を検出させると左回転、右の方に円を検出させると右回転する。
+
+恐らくカメラの解像度や撮影時の背景によって上手く動作しないので、ROSパラメーターを調整する。
+
+launchディレクトリー内のturtle_operation.launchを開き、下記のvalueを適当に変更し、上書き保存する。（※改めてcatkin_makeする必要はない。）
+
+**accumulator_threshold**
+円が検出されないときは値を小さく、円が検出されすぎるときは値を大きくする。
+**scale_linear**
+亀の直進移動が早すぎる場合は値を大きく、遅すぎる場合は値を小さくする。
+**scale_angular**
+亀の回転移動が早すぎる場合は値を大きく、遅すぎる場合は値を小さくする。
+
+亀は上手く動かせましたか？
 
