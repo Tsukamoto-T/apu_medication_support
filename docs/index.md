@@ -212,31 +212,32 @@ usb_camのデフォルトのピクセルフォーマットはmjpegなので、v4
 
 ターミナルを3つ利用する。
 
-### １つ目
+１つ目  
 ```
 $ roscore
 ```
 
-### ２つ目
+２つ目  
 ```
 $ rosrun usb_cam usb_cam_node
 ```
 
-### ３つ目
- ```
- $ rosrun image_view image_view image:=/usb_cam/image_raw
- ```  
- ウィンドウが1つ表示されればOKです。
- 
- ---  
- ※Melodicではcv_cameraが正常に動作しなかった。←Segmentation fault (core dumped)  
- 2つ目  
- ```
- $ rosrun cv_camera cv_camera_node
- ```  
- 3つ目  
- ```
- $ rosrun image_view image_view image:=/cv_camera/image_raw
- ```  
- ---
+３つ目  
+```
+$ rosrun image_view image_view image:=/usb_cam/image_raw
+```  
+ウィンドウが1つ表示されればOKです。
+
+---  
+※Melodicではcv_cameraが正常に動作しなかった。←Segmentation fault (core dumped)  
+
+2つ目  
+```
+$ rosrun cv_camera cv_camera_node
+```  
+3つ目  
+```
+$ rosrun image_view image_view image:=/cv_camera/image_raw
+```  
+---
 
