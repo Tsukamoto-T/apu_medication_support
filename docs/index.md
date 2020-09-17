@@ -1,5 +1,4 @@
 # ROSの概要
-## 概要
 ## 歴史
 - 2010年、アメリカのWillow Garageが開発した。源流はStanfordのAI Lab（STAIR）で、2018年現在はOSRFが管理している。
 - ハードを中心としたロボット指向プログラミングだったのが、ソフトを中心としたモジュール指向プログラミングに変わってきた。
@@ -101,7 +100,7 @@ $ sudo apt install ros-melodic-opencv-apps
 
 
 
-#ROSの動作確認
+# ROSの動作確認
 ## turtlesimをキーボードで動かす  
 全部で４つのターミナルが必要になります。ターミナルを４つ用意しても良いですし、１つのターミナルに４つのタブを作成しても良いです。
 
@@ -198,4 +197,46 @@ $ rosservice call /clear
 $ rosrun turtlesim turtlesim_node __name:=hoge
 ```  
 逆に、異なる名前を指定すれば、複数の亀を発生させることも可能です。
+
+# 公開パッケージを用いた画像処理
+## USBカメラの利用方法
+ROSパッケージ「usb_cam」で画像を取得し、別のROSパッケージ「image_view」で画像を表示する。
+
+内蔵カメラが搭載されていないコンピューターの場合は、外付けカメラ（USBカメラ）を接続する。（VirtualBoxを使用している場合は、カメラが使用できるようにDevicesでUSB（Webcams）にチェックを入れる。）
+
+ターミナルで下記のコマンドを実行し、/dev/video0が存在することを確認する。カメラが２つある場合は/dev/video1も存在する。  
+```
+$ ls /dev/video*
+```  
+usb_camのデフォルトのピクセルフォーマットはmjpegなので、v4l2-ctlで設定を確認・変更しておく。
+
+ターミナルを3つ利用する。
+
+### １つ目
+```
+$ roscore
+```
+
+### ２つ目
+```
+$ rosrun usb_cam usb_cam_node
+```
+
+### ３つ目
+ ```
+ $ rosrun image_view image_view image:=/usb_cam/image_raw
+ ```  
+ ウィンドウが1つ表示されればOKです。
+ 
+ ---  
+ ※Melodicではcv_cameraが正常に動作しなかった。←Segmentation fault (core dumped)  
+ 2つ目  
+ ```
+ $ rosrun cv_camera cv_camera_node
+ ```  
+ 3つ目  
+ ```
+ $ rosrun image_view image_view image:=/cv_camera/image_raw
+ ```  
+ ---
 
