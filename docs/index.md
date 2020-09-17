@@ -290,11 +290,11 @@ ROSパッケージ「opencv_apps」のROSノード「hough_circles（ハフ変�
 
 launchディレクトリー内のturtle_operation.launchを開き、下記のvalueを適当に変更し、上書き保存する。（※改めてcatkin_makeする必要はない。）
 
-    **accumulator_threshold**
-    円が検出されないときは値を小さく、円が検出されすぎるときは値を大きくする。
-    **scale_linear**
-亀の直進移動が早すぎる場合は値を大きく、遅すぎる場合は値を小さくする。
-**scale_angular**
+- **accumulator_threshold**  
+円が検出されないときは値を小さく、円が検出されすぎるときは値を大きくする。  
+- **scale_linear**  
+亀の直進移動が早すぎる場合は値を大きく、遅すぎる場合は値を小さくする。  
+- **scale_angular**  
 亀の回転移動が早すぎる場合は値を大きく、遅すぎる場合は値を小さくする。
 
 亀は上手く動かせましたか？
