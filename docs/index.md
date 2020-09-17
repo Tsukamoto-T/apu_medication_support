@@ -241,3 +241,36 @@ $ rosrun image_view image_view image:=/cv_camera/image_raw
 ```  
 ---  
 ※uvc_cameraはMelodicに対応していないらしい。
+
+## ROSパッケージの利用方法
+毎回、ターミナルを複数開くのは面倒なので、ここからはROSコマンド「roslaunch」を使用する。roslaunchコマンドでlaunchファイルを実行すると、複数のROSノードを1つのターミナルで起動することができる。
+
+サンプルプログラムをGitHub上に公開しているので、~/catkin_ws/srcにcloneして使用する。既にclone済みの場合はpullする。各自でGitHubアカウントを作成してください。
+
+```
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/suzuki-takuo/stl_ros_sample.git
+```  
+サンプルプログラムをビルドする。  
+```
+$ cd ~/catkin_ws
+$ catkin_make
+$ source devel/setup.bash
+```  
+下記のとおり実行する。launchディレクトリー内のedge_detection.launchを確認すると、4つのROSノードが起動することが分かる。  
+```
+roslaunch stl_ros_sample edge_detection.launch
+```  
+ROSパッケージ「opencv_apps」は画像処理用ライブラリーであるOpenCVをROSで気軽に使用できるようにしたもので、この例では同パッケージ内のROSノード「edge_detection（エッジ検出）」を利用している。
+
+2つのウィンドウが表示され、顔の輪郭などに白線が出ていればOKです。
+
+研究では白線に基づいて顔を検出したり認識したりする。
+
+## ROSパッケージの結合方法
+画像処理の結果を利用して、亀を動かす。
+
+camera_infoの情報を利用することになるので、カメラのキャリブレーションを行う。→Camera Calibration
+
+試しに実行する。5つのROSノードが起動する。
+
