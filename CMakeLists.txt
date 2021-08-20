@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(medicine_calendar)
+project(apu_medication_support)
 
 add_definitions(-std=c++11)
 

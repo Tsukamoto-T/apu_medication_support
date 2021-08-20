@@ -29,19 +29,3 @@ table_side:
       y: 0.0
       z: 1.0
       w: -0.0015
-
-### test_position
-test_position:
-  header:
-    frame_id: "map"
-  child_frame_id: "test_position"
-  transform:
-    translation:
-      x: 0.7
-      y: 0.0
-      z: 0.0
-    rotation:
-      x: 0.0
-      y: 0.0
-      z: 0.0
-      w: 1.0

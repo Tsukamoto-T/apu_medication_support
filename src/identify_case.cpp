@@ -61,7 +61,7 @@ private:
   ros::Publisher pub_cluster_points;
   ros::Publisher pub_cluster_calendar;
   ros::Publisher pub_calendar;
-  ros::Publisher pub_case;;
+  ros::Publisher pub_case;
   ros::Publisher pub_case_removal;
   ros::Publisher pub_case_filtered;
   //ros::Publisher pub_case_unfiltered;

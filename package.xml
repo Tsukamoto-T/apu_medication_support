@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>medicine_calendar</name>
+  <name>apu_medication_support</name>
   <version>0.1.0</version>
-  <description>The medicine_calendar package</description>
+  <description>The apu_medication_support package</description>
 
-  <maintainer email="medicine_calendar@todo.todo">medicine_calendar</maintainer>
+  <maintainer email="apu_medication_support@todo.todo">apu_medication_support</maintainer>
 
   <license>TODO</license>
 
