@@ -24,3 +24,5 @@ tsukamoto tomoki
 
 ## src
 - identify_case：薬ケース認識
+- edge_detection：エッジ検出
+- transparent_detection：透明検出
