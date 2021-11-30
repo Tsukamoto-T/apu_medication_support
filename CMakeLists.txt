@@ -11,13 +11,21 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   pcl_conversions
   tf
+  cv_bridge
 )
+find_package(OpenCV REQUIRED)
 
 catkin_package(
   CATKIN_DEPENDS
 )
 
-include_directories(${catkin_INCLUDE_DIRS})
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
 
 add_executable(identify_case src/identify_case.cpp)
 target_link_libraries(identify_case ${catkin_LIBRARIES})
+
+add_executable(transparent_detection src/transparent_detection.cpp)
+target_link_libraries(transparent_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

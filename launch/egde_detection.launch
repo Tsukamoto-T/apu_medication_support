@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="filters"  value="pointcloud"/>
+    <arg name="initial_reset" value="true"/>
+    <arg name="depth_width" value="640"/>
+    <arg name="depth_height" value="480"/>
+    <arg name="depth_fps" value="30"/>
+    <arg name="color_width" value="640"/>
+    <arg name="color_height" value="480"/>
+    <arg name="color_fps" value="30"/>
+    <arg name="align_depth" value="true"/>
+  </include>
+  <node name="apu_egde_detection_node" pkg="apu_medication_support" type="edge_detection" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apu_medication_support)/rviz/sample.rviz" required="true" output="screen" />
+</launch>
