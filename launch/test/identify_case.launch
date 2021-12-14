@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <launch>
   <node name="apu_identify_case_node" pkg="apu_medication_support" type="identify_case" output="screen">
     <param name="threshold_calendar" value="0.005"/> <!--値が小さいほど平面の条件が小さくなる-->

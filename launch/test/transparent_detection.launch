@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <!---->
   <include file="$(find realsense2_camera)/launch/rs_camera.launch">
     <param name="/camera/realsense2_camera/filters" value="pointcloud"/>
     <arg name="filters"  value="pointcloud"/>
@@ -14,7 +13,7 @@
 
     <arg name="align_depth" value="true"/>-->
   </include>
-  <!---->
+
   <node name="apu_transparent_detection_node" pkg="apu_medication_support" type="transparent_detection" output="screen"/>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apu_medication_support)/rviz/transparent.rviz" required="true" output="screen" />
 </launch>

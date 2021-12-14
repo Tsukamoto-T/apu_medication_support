@@ -26,3 +26,6 @@ tsukamoto tomoki
 - identify_case：薬ケース認識
 - edge_detection：エッジ検出
 - transparent_detection：透明検出
+
+## memo
+- rostopic pub /idntify_calendar_node/flag std_msgs::Int16 0：flag投げる
