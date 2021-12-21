@@ -28,4 +28,9 @@ tsukamoto tomoki
 - transparent_detection：透明検出
 
 ## memo
-- rostopic pub /idntify_calendar_node/flag std_msgs::Int16 0：flag投げる
+ - rosbag record /tf /tf_static /hsrb/head_rgbd_sensor/depth_registered/camera_info /hsrb/head_rgbd_sensor/depth_registered/rectified_points /hsrb/head_rgbd_sensor/rgb/camera_info /hsrb/head_rgbd_sensor/rgb/image_rect_color /hsrb/head_rgbd_sensor/depth_registered/image_rect_raw -O calendar.bag
+ 
+- rostopic pub /apu_identify_calendar_node/flag std_msgs/Int16 0：flag投げる
+
+- rosparam set /use_sim_time true
+- rosbag play --clock -q src/apu_medication_support/bag/calendar_mv.bag

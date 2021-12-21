@@ -103,12 +103,12 @@ IdentifyCalendar::IdentifyCalendar(){
   std::string hsr_topic = "/hsrb/head_rgbd_sensor/depth_registered/rectified_points";
   //std::string hsr_topic = "/camera/depth/color/points";
   sub_points = nh.subscribe(hsr_topic, 1, &IdentifyCalendar::CloudCb,this);
-  sub_flag = nh.subscribe("/identify_calendar_node/flag", 1, &IdentifyCalendar::flagCb,this);
+  sub_flag = nh.subscribe("/apu_identify_calendar_node/flag", 1, &IdentifyCalendar::flagCb,this);
   //if (!ros::topic::waitForMessage<sensor_msgs::PointCloud2>(hsr_topic, nh, ros::Duration(10.0))) {
-  if (!ros::topic::waitForMessage<sensor_msgs::PointCloud2>(hsr_topic)) {
-    ROS_ERROR("timeout exceeded while waiting for message on topic %s", hsr_topic.c_str());
-    exit(EXIT_FAILURE);
-  }
+  //if (!ros::topic::waitForMessage<sensor_msgs::PointCloud2>(hsr_topic)) {
+  //  ROS_ERROR("timeout exceeded while waiting for message on topic %s", hsr_topic.c_str());
+  //  exit(EXIT_FAILURE);
+  //}
 
   pub_all = nh.advertise<sensor_msgs::PointCloud2>("cloud_all", 1);
   pub_rest = nh.advertise<sensor_msgs::PointCloud2>("cloud_rest", 1);
@@ -120,6 +120,8 @@ IdentifyCalendar::IdentifyCalendar(){
 
   header.frame_id = header_tf;
   header.stamp = ros::Time::now();
+  x_base = x_base - 0.001;
+  y_base = y_base - 0.002;
 }
 
 //====flag=============================================================================
@@ -139,8 +141,8 @@ void IdentifyCalendar::Output_pub(pcl::PointCloud<PointT>::Ptr cloud_,sensor_msg
 
 //=========コールバック==============================================================
 void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
-  std::cout << "Callback_start" << std::endl;
-  if(!(flag == 1 || flag == 2)){
+  std::cout << "identify calendar callback_start" << std::endl;
+  if(!(flag == 1)){
     std::cout << "flag is false" << std::endl;
     return;
   }
@@ -226,11 +228,11 @@ void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
     return;
   }
   //=====外れ値処理=====================================================================
-  pcl::StatisticalOutlierRemoval<PointT> sor;
-  sor.setInputCloud(cloud_cluster_calendar);
-  sor.setMeanK(outlier_removal_number_neighbors_calendar);
-  sor.setStddevMulThresh(outlier_removal_th_calendar);
-  sor.filter(*cloud_cluster_calendar);
+  //pcl::StatisticalOutlierRemoval<PointT> sor;
+  //sor.setInputCloud(cloud_cluster_calendar);
+  //sor.setMeanK(outlier_removal_number_neighbors_calendar);
+  //sor.setStddevMulThresh(outlier_removal_th_calendar);
+  //sor.filter(*cloud_cluster_calendar);
 
   //==========出力==================================================================
   sensor_msgs::PointCloud2 msgs_all;
@@ -251,7 +253,9 @@ void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   msgs_cluster_calendar.header = header;
   pub_cluster_calendar.publish(msgs_cluster_calendar);
 
+
   //===========現在の時点にあったポケットの位置の推定=================================================================
+
   //----------カレンダーの左上の座標を求める----------------------------------------------
   double min_point = 0.0;
   double max_point = 0.0;
@@ -271,7 +275,7 @@ void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   double calendar_x = abs(cloud_cluster_calendar->points[min_i].x - cloud_cluster_calendar->points[max_i].x);
   double calendar_y = abs(cloud_cluster_calendar->points[min_i].y - cloud_cluster_calendar->points[max_i].y);
 
-  if(calendar_x < 0.3 || 0.38 < calendar_x || 0.05 < calendar_y){
+  if(calendar_x < 0.38 || 0.4 < calendar_x || 0.05 < calendar_y){
     std::cout << "calendar point is not found" << std::endl;
     return;
   }
@@ -375,17 +379,28 @@ void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
     time = "ねる前";
     break;
   }
-  //std::cout << time << std::endl;
-  present_point.z = upper_left_point.z;
+
+  present_point.z = upper_left_point.z - 0.01;
   cloud_present_point->points.push_back(present_point);
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_pocket_points(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointXYZ present_point_dr;
+  present_point_dr.z = present_point.z;
   present_point.x = present_point.x - 0.01;
   present_point.y = present_point.y - 0.01;
   cloud_pocket_points->points.push_back(present_point);
-  present_point.x = present_point.x + x_interval + 0.03;
-  present_point.y = present_point.y + y_interval + 0.03;
-  cloud_pocket_points->points.push_back(present_point);
+  present_point_dr.x = present_point.x + x_interval + 0.02;
+  present_point_dr.y = present_point.y + y_interval + 0.02;
+  cloud_pocket_points->points.push_back(present_point_dr);
+
+  //-----一時的に------------
+  for(int i =0;i<3;i++){
+    present_point.x = present_point.x + x_interval ;
+    cloud_pocket_points->points.push_back(present_point);
+    present_point_dr.x = present_point_dr.x + x_interval;
+    cloud_pocket_points->points.push_back(present_point_dr);
+  }
+
 
   //---出力-----
   sensor_msgs::PointCloud2 msgs_present_point;
@@ -397,33 +412,6 @@ void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg
   pcl::toROSMsg(*cloud_pocket_points, msgs_pocket_points);
   msgs_pocket_points.header = header;
   pub_pocket_points.publish(msgs_pocket_points);
-
-  //====pcl->image=======
-  /*
-  sensor_msgs::Image image_;
-  if ((cloud_msg->width * cloud_msg->height) == 0){
-    return;
-  }
-
-  PointT point_test;
-  point_test.x=present_point.x;
-  point_test.y=present_point.y;
-  point_test.z=present_point.z;
-  point_test.r=0;
-  point_test.g=0;
-  point_test.b=0;
-
-  cloud_all->points.push_back(point_test);
-
-  try{
-    pcl::toROSMsg (*cloud_all, image_);
-  }
-  catch (std::runtime_error e){
-    ROS_ERROR_STREAM("Error in converting cloud to image message: " << e.what());
-  }
-
-  pub_image.publish (image_);
-  */
 
 }
 

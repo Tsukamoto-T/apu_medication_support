@@ -7,9 +7,9 @@ Panels:
         - /Global Options1
         - /Status1
         - /PointCloud21
-        - /PointCloud22
+        - /PointCloud23
       Splitter Ratio: 0.5
-    Tree Height: 803
+    Tree Height: 951
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -112,6 +112,66 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 0; 0
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 5
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /apu_identify_calendar_node/cloud_cluster_calendar
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 0; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 2
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /apu_identify_calendar_node/cloud_rest_removal
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 0; 0; 255
       Color Transformer: FlatColor
       Decay Time: 0
       Enabled: true
@@ -127,37 +187,7 @@ Visualization Manager:
       Size (Pixels): 10
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /apu_identify_calendar_node/cloud_pocket_points
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: RGB8
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 2
-      Size (m): 0.009999999776482582
-      Style: Points
-      Topic: /apu_identify_calendar_node/cloud_cluster_calendar
+      Topic: /apu_identify_calendar_node/cloud_present_point
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -190,25 +220,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.8715643882751465
+      Distance: 0.9918469786643982
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.7119687795639038
-        Y: -0.8070883750915527
-        Z: 1.026274561882019
+        X: 0.48878151178359985
+        Y: 1.2609623670578003
+        Z: 1.0655736923217773
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.04479651153087616
+      Pitch: 0.1397966891527176
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.3103950023651123
+      Yaw: 4.695397853851318
     Saved: ~
 Window Geometry:
   Displays:
@@ -218,7 +248,7 @@ Window Geometry:
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000003290000041bfc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000034c0000041b0000018200fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000043f0000041bfc0200000004fb0000000a0049006d006100670065010000034c0000041b0000002600fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000034c0000041b0000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000e82000002d2fc0100000004fb0000000a0049006d00610067006501000000000000046e0000009100fffffffb0000000a0049006d006100670065010000047a000005780000009100fffffffb0000000a0049006d00610067006501000009fe000004840000009100fffffffb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000e8200000060fc0100000002fb0000000800540069006d0065010000000000000e820000057100fffffffb0000000800540069006d00650100000000000004500000000000000000000007020000041b00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000040000000000000329000004affc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000b000fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000002b8000004af0000018200fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000043f000004affc0200000004fb0000000a0049006d00610067006501000002b8000004af0000002600fffffffb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000034c0000041b0000013200fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000e820000023efc0100000004fb0000000a0049006d00610067006501000000000000046e0000009100fffffffb0000000a0049006d006100670065010000047a000005780000009100fffffffb0000000a0049006d00610067006501000009fe000004840000009100fffffffb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000e8200000060fc0100000002fb0000000800540069006d0065010000000000000e820000057100fffffffb0000000800540069006d0065010000000000000450000000000000000000000702000004af00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
