@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apu_medication_support)/rviz/transparent.rviz" required="true" output="screen" />
+  <node name="apu_identify_calendar_node" pkg="apu_medication_support" type="ex_2_identify_calendar" output="screen">
+    <param name="first_plane_segmentation_threshold" value="0.005"/>
+    <param name="outlier_removal_number_neighbors_wall" value="300"/>
+    <param name="outlier_removal_th_wall" value="0.001"/>
+    <param name="cluster_tolerance" value="0.006"/>
+    <param name="max_cluster_size" value="60000"/>
+    <param name="min_cluster_size" value="10000"/>
+    <param name="outlier_removal_number_neighbors_calendar" value="1"/>
+    <param name="outlier_removal_th_calendar" value="1"/>
+    <param name="x_base" value="0.045"/>
+    <param name="y_base" value="0.07"/>
+    <param name="x_interval" value="0.083"/>
+    <param name="y_interval" value="0.073"/>
+    <param name="set_week" value="4"/>
+    <param name="set_time" value="8"/>
+  </node>
+
+
+</launch>

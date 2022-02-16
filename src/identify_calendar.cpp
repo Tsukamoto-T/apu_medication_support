@@ -142,7 +142,7 @@ void IdentifyCalendar::Output_pub(pcl::PointCloud<PointT>::Ptr cloud_,sensor_msg
 //=========コールバック==============================================================
 void IdentifyCalendar::CloudCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg) {
   std::cout << "identify calendar callback_start" << std::endl;
-  if(!(flag == 1)){
+  if(!(flag == 2)){
     std::cout << "flag is false" << std::endl;
     return;
   }
@@ -421,7 +421,7 @@ int main (int argc, char** argv){
 	ros::init (argc, argv, "IdentifyCalendar");
   IdentifyCalendar IdentifyCalendar;
 
-  ros::Rate rate(1);
+  ros::Rate rate(2);
   while(ros::ok()){
     ros::spinOnce();
     rate.sleep();

@@ -39,5 +39,13 @@ target_link_libraries(identify_case ${catkin_LIBRARIES})
 add_executable(identify_calendar src/identify_calendar.cpp)
 target_link_libraries(identify_calendar ${catkin_LIBRARIES})
 
+add_executable(ex_identify_calendar src/ex_identify_calendar.cpp)
+target_link_libraries(ex_identify_calendar ${catkin_LIBRARIES})
+add_executable(ex_2_identify_calendar src/ex_2_identify_calendar.cpp)
+target_link_libraries(ex_2_identify_calendar ${catkin_LIBRARIES})
+
+add_executable(ex_2_transparent_detection src/ex_2_transparent_detection.cpp)
+target_link_libraries(ex_2_transparent_detection ${catkin_LIBRARIES})
+
 add_executable(transparent_detection src/transparent_detection.cpp)
 target_link_libraries(transparent_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
